@@ -1,7 +1,7 @@
 package com.westosia.essentials.redis;
 
-import com.westosia.essentials.homes.Home;
-import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.core.homes.Home;
+import com.westosia.essentials.core.homes.HomeManager;
 import com.westosia.redisapi.redis.RedisChannelListener;
 import org.bukkit.Bukkit;
 

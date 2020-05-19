@@ -1,4 +1,4 @@
-main: com.westosia.essentials.Main
+main: com.westosia.essentials.bukkit.Main
 name: Essentials
 version: 0.1
 author: TheBirmanator
@@ -13,4 +13,4 @@ commands:
     permission-message: §cSorry, you do not have permission to use this command.
 permissions:
   essentials.*:
-    description: Gives access to all DynamicFly commands and permisions
+    description: Gives access to all Essentials commands and permisions

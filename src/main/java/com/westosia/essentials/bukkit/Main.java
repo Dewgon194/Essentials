@@ -1,7 +1,6 @@
-package com.westosia.essentials;
+package com.westosia.essentials.bukkit;
 
-import com.westosia.essentials.homes.Home;
-import com.westosia.essentials.homes.commands.SetHomeCmd;
+import com.westosia.essentials.core.homes.commands.SetHomeCmd;
 import com.westosia.essentials.redis.SetHomeListener;
 import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.utils.Text;

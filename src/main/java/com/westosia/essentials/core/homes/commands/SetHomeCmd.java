@@ -1,8 +1,7 @@
-package com.westosia.essentials.homes.commands;
+package com.westosia.essentials.core.homes.commands;
 
-import com.westosia.essentials.Main;
-import com.westosia.essentials.homes.Home;
-import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.bukkit.Main;
+import com.westosia.essentials.core.homes.Home;
 import com.westosia.redisapi.redis.RedisConnector;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

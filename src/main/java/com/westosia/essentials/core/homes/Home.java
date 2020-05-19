@@ -1,4 +1,4 @@
-package com.westosia.essentials.homes;
+package com.westosia.essentials.core.homes;
 
 import com.westosia.essentials.utils.LocationStrings;
 import org.bukkit.Bukkit;
