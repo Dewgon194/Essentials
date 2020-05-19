@@ -1,0 +1,16 @@
+main: com.westosia.essentials.Main
+name: Essentials
+version: 0.1
+author: TheBirmanator
+api-version: 1.15
+description: Essentials but only the essentials
+depend: [RedisAPI, WestosiaAPI]
+commands:
+  sethome:
+    usage: /<command> [name]
+    description: Set a home that a player can return to, optionally with a name
+    permission: essentials.command.sethome
+    permission-message: §cSorry, you do not have permission to use this command.
+permissions:
+  essentials.*:
+    description: Gives access to all DynamicFly commands and permisions
