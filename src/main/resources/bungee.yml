@@ -1,0 +1,8 @@
+main: com.westosia.essentials.bungee.Main
+name: Essentials
+version: 0.1
+authors:
+  - TheBirmanator
+  - TheMGRF
+  - JamieCee
+description: Essentials but only the essentials
