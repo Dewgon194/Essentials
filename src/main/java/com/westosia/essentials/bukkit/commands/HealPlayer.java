@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 public class HealPlayer extends BaseCommand {
 
     @Default
+    @CommandCompletion("@players")
     @Description("Heals the player casting the message")
     public void heal(Player player, String[] args) {
         double healthInt = player.getHealth();

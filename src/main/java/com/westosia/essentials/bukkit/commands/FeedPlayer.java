@@ -1,10 +1,7 @@
 package com.westosia.essentials.bukkit.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.*;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.Bukkit;
@@ -23,6 +20,7 @@ import org.bukkit.entity.Player;
 public class FeedPlayer extends BaseCommand {
 
     @Default
+    @CommandCompletion("@players")
     @Description("Feeds the player casting the message")
     public void feed(Player player, String[] args) {
         double feedInt = player.getFoodLevel();
