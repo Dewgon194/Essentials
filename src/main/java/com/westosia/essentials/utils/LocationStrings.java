@@ -17,8 +17,8 @@ public class LocationStrings {
                 location.getX() + "|" +
                 location.getY() + "|" +
                 location.getZ() + "|" +
-                location.getPitch() + "|" +
-                location.getYaw() +
+                location.getYaw() + "|" +
+                location.getPitch() +
                 ")";
     }
 }

@@ -1,5 +1,7 @@
 package com.westosia.essentials.core.homes;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.westosia.essentials.utils.LocationStrings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,6 +18,7 @@ public class Home {
     public Home(Player player, String name) {
         owner = player.getUniqueId();
         this.name = name;
+        //TODO: make this get actual server from Bungee
         server = player.getServer().getName();
         location = player.getLocation();
     }
@@ -24,6 +27,7 @@ public class Home {
         owner = uuid;
         this.name = name;
         this.server = server;
+        //TODO: round locations to two decimal places, we don't need massive .763892384843989
         this.location = location;
     }
 
@@ -49,5 +53,21 @@ public class Home {
                 name + "|" +
                 server + "|" +
                 LocationStrings.toString(getLocation());
+    }
+
+    public byte[] toByteArray() {
+        ByteArrayDataOutput bytes = ByteStreams.newDataOutput();
+        bytes.writeUTF(owner.toString());
+        bytes.writeUTF(getName());
+        bytes.writeUTF(getServerName());
+        bytes.writeUTF(LocationStrings.toString(getLocation()));
+        return bytes.toByteArray();
+    }
+
+    public void use() {
+        Player player = getOwner().getPlayer();
+        if (player != null) {
+            player.teleport(getLocation());
+        }
     }
 }

@@ -33,8 +33,8 @@ public class HomeManager {
         playerHomes.put(home.getOwner().getUniqueId(), homes);
     }
 
-    public static void removeHome(Player player, String home) {
-        getHomes(player).remove(home);
+    public static void removeHome(Home home) {
+        getHomes(home.getOwner()).remove(home.getName());
     }
 
     public static Home fromString(String string) {
