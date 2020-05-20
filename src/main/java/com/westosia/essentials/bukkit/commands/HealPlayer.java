@@ -8,6 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
+/*
+    Author: Jamie Cee
+    Description: This command allows players with the permission to heal themselves or a targeted player.
+    /heal [player] will heal the targeted player or /heal will heal the user entering the command.
+
+ */
+
+
 @CommandAlias("heal")
 @CommandPermission("essentials.command.heal")
 public class HealPlayer extends BaseCommand {

@@ -11,6 +11,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
+/*
+    Author: Jamie Cee
+    Description: This command allows players with the permission to feed themselves or a targeted player.
+    /feed [player] will feed the targeted player or /feed will feed the user entering the command.
+
+ */
+
 @CommandAlias("feed")
 @CommandPermission("essentials.command.feed")
 public class FeedPlayer extends BaseCommand {

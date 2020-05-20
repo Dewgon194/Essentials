@@ -13,6 +13,15 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+
+/*
+    Author: Jamie Cee
+    Description: This command allows players with the permission to smite a targetted block or a targetted player.
+    Not entering a parameter for a player e.g. just doing /smite will send a lightning strike to where the player is aiming.
+    Entering an existing player that is currently on the server e.g. /smite [player] will smite that player.
+
+ */
+
 @CommandAlias("smite|smitten")
 @CommandPermission("essentials.command.smite")
 public class Smite extends BaseCommand {
