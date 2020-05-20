@@ -3,6 +3,7 @@ package com.westosia.essentials.bukkit;
 import co.aikar.commands.PaperCommandManager;
 import com.westosia.essentials.bukkit.commands.FeedPlayer;
 import com.westosia.essentials.bukkit.commands.HealPlayer;
+import com.westosia.essentials.bukkit.commands.Smite;
 import com.westosia.essentials.core.homes.commands.SetHomeCmd;
 import com.westosia.essentials.redis.SetHomeListener;
 import com.westosia.redisapi.redis.RedisConnector;
@@ -19,6 +20,7 @@ public class Main extends JavaPlugin {
         PaperCommandManager manager = new PaperCommandManager(this);
         manager.registerCommand(new HealPlayer());
         manager.registerCommand(new FeedPlayer());
+        manager.registerCommand(new Smite());
         instance = this;
         RedisConnector.getInstance().listenForChannel(sethomeChannel, new SetHomeListener());
         SetHomeCmd setHomeCmd = new SetHomeCmd();
