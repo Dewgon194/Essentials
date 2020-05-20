@@ -4,12 +4,11 @@ import com.westosia.essentials.core.homes.Home;
 import com.westosia.essentials.core.homes.HomeManager;
 import com.westosia.redisapi.redis.RedisChannelListener;
 
-public class SetHomeListener implements RedisChannelListener {
+public class DelHomeListener implements RedisChannelListener {
 
     @Override
     public void messageReceived(String message) {
         Home home = HomeManager.fromString(message);
-        HomeManager.cacheHome(home);
-        //Bukkit.broadcastMessage(message);
+        HomeManager.removeHome(home);
     }
 }
