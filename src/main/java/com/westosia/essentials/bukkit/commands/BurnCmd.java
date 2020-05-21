@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("burn")
 @CommandPermission("essentials.command.burn")
-public class Burn extends BaseCommand {
+public class BurnCmd extends BaseCommand {
 
     @Default
     @CommandCompletion("@players")

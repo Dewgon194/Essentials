@@ -4,10 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.westosia.essentials.bukkit.commands.Burn;
-import com.westosia.essentials.bukkit.commands.FeedPlayer;
-import com.westosia.essentials.bukkit.commands.HealPlayer;
-import com.westosia.essentials.bukkit.commands.Smite;
+import com.westosia.essentials.bukkit.commands.*;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
 import com.westosia.essentials.core.homes.commands.DelHomeCmd;
 import com.westosia.essentials.core.homes.commands.HomeCmd;
@@ -30,13 +27,14 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(DEL_HOME_REDIS_CHANNEL, new DelHomeListener());
 
         registerCommands(
-                new HealPlayer(),
-                new FeedPlayer(),
-                new Smite(),
+                new HealPlayerCmd(),
+                new FeedPlayerCmd(),
+                new SmiteCmd(),
                 new SetHomeCmd(),
                 new HomeCmd(),
                 new DelHomeCmd(),
-                new Burn()
+                new BurnCmd(),
+                new CraftCmd()
         );
 
         // register bungee plugin channel

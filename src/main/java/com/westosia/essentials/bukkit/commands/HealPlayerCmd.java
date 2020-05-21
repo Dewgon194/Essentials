@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("heal")
 @CommandPermission("essentials.command.heal")
-public class HealPlayer extends BaseCommand {
+public class HealPlayerCmd extends BaseCommand {
 
     @Default
     @CommandCompletion("@players")

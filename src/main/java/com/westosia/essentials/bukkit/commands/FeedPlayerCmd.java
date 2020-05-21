@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("feed")
 @CommandPermission("essentials.command.feed")
-public class FeedPlayer extends BaseCommand {
+public class FeedPlayerCmd extends BaseCommand {
 
     @Default
     @CommandCompletion("@players")

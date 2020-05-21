@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("smite|smitten")
 @CommandPermission("essentials.command.smite")
-public class Smite extends BaseCommand {
+public class SmiteCmd extends BaseCommand {
 
     @Default
     @CommandCompletion("@players")
