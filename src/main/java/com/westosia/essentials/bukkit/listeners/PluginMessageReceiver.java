@@ -33,6 +33,7 @@ public class PluginMessageReceiver implements PluginMessageListener {
             String target = in.readUTF();
             Bukkit.getPlayer(source).teleport(Bukkit.getPlayer(target)); // Ignore NPEs
         } else if (subChannel.equalsIgnoreCase("EssentialsSendToHome")) {
+            // Send a player to a home
             short len = in.readShort();
             byte[] msgbytes = new byte[len];
             in.readFully(msgbytes);
@@ -46,7 +47,16 @@ public class PluginMessageReceiver implements PluginMessageListener {
                 e.printStackTrace();
             }
         } else if (subChannel.equalsIgnoreCase("GetServer")) {
+            // Grab the server name from Bungee; only runs on server enable
             Main.getInstance().serverName = in.readUTF();
+        } else if (subChannel.equalsIgnoreCase("EssentialsHomes")) {
+            // Loading and saving homes
+            if (in.readUTF().equalsIgnoreCase("load")) {
+                // Player has just joined; load from database
+                String uuidString = in.readUTF();
+                // TODO: database call here to retrieve homes belonging to the uuid
+                //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
+            }
         }
     }
 }
