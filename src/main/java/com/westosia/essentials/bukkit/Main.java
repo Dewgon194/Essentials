@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.westosia.essentials.bukkit.commands.Burn;
 import com.westosia.essentials.bukkit.commands.FeedPlayer;
 import com.westosia.essentials.bukkit.commands.HealPlayer;
 import com.westosia.essentials.bukkit.commands.Smite;
@@ -34,7 +35,8 @@ public class Main extends JavaPlugin {
                 new Smite(),
                 new SetHomeCmd(),
                 new HomeCmd(),
-                new DelHomeCmd()
+                new DelHomeCmd(),
+                new Burn()
         );
 
         // register bungee plugin channel
