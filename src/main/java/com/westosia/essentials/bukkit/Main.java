@@ -34,7 +34,8 @@ public class Main extends JavaPlugin {
                 new HomeCmd(),
                 new DelHomeCmd(),
                 new BurnCmd(),
-                new CraftCmd()
+                new CraftCmd(),
+                new FireballCmd()
         );
 
         // register bungee plugin channel
