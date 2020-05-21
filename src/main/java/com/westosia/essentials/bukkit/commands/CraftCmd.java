@@ -17,7 +17,7 @@ import org.bukkit.inventory.Inventory;
 
  */
 
-@CommandAlias("craft")
+@CommandAlias("craft|crafting|workbench|wb")
 @CommandPermission("essentials.command.craft")
 public class CraftCmd extends BaseCommand {
 
