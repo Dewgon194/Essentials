@@ -15,12 +15,11 @@ public class Home {
     private String name, server;
     private Location location;
 
-    public Home(Player player, String name) {
+    public Home(Player player, String name, String server, Location location) {
         owner = player.getUniqueId();
         this.name = name;
-        //TODO: make this get actual server from Bungee
-        server = player.getServer().getName();
-        location = player.getLocation();
+        this.server = server;
+        this.location = LocationStrings.shrinkLoc(location);
     }
 
     Home(UUID uuid, String name, String server, Location location) {
@@ -28,7 +27,7 @@ public class Home {
         this.name = name;
         this.server = server;
         //TODO: round locations to two decimal places, we don't need massive .763892384843989
-        this.location = location;
+        this.location = LocationStrings.shrinkLoc(location);
     }
 
     public OfflinePlayer getOwner() {

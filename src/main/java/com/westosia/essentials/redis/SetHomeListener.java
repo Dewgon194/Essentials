@@ -10,6 +10,5 @@ public class SetHomeListener implements RedisChannelListener {
     public void messageReceived(String message) {
         Home home = HomeManager.fromString(message);
         HomeManager.cacheHome(home);
-        //Bukkit.broadcastMessage(message);
     }
 }

@@ -19,11 +19,11 @@ public class DelHomeCmd extends BaseCommand {
 
     @Default
     @Description("Deletes the home of the given name")
-    public void setHome(Player player, String[] args) {
+    public void delHome(Player player, String[] args) {
         if (args.length > 0) {
             Home home = HomeManager.getHome(player, args[0]);
             if (home != null) {
-                RedisConnector.getInstance().getConnection().publish(Main.getInstance().delhomeChannel, home.toString());
+                RedisConnector.getInstance().getConnection().publish(Main.getInstance().DEL_HOME_REDIS_CHANNEL, home.toString());
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Home &f" + args[0] + "&a removed");
             } else {
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Home &f" + args[0] + "&c not found");

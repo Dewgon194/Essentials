@@ -2,6 +2,8 @@ package com.westosia.essentials.bukkit;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.PaperCommandManager;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.commands.FeedPlayer;
 import com.westosia.essentials.bukkit.commands.HealPlayer;
 import com.westosia.essentials.bukkit.commands.Smite;
@@ -16,15 +18,15 @@ import com.westosia.westosiaapi.utils.Text;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
-    public final String sethomeChannel = "sethome";
-    public final String delhomeChannel = "delhome";
+    public final String SET_HOME_REDIS_CHANNEL = "sethome";
+    public final String DEL_HOME_REDIS_CHANNEL = "delhome";
+    public String serverName = "";
     private static Main instance;
 
     public void onEnable() {
         instance = this;
-
-        RedisConnector.getInstance().listenForChannel(sethomeChannel, new SetHomeListener());
-        RedisConnector.getInstance().listenForChannel(delhomeChannel, new DelHomeListener());
+        RedisConnector.getInstance().listenForChannel(SET_HOME_REDIS_CHANNEL, new SetHomeListener());
+        RedisConnector.getInstance().listenForChannel(DEL_HOME_REDIS_CHANNEL, new DelHomeListener());
 
         registerCommands(
                 new HealPlayer(),
@@ -36,7 +38,9 @@ public class Main extends JavaPlugin {
         );
 
         // register bungee plugin channel
+        getServer().getMessenger().registerOutgoingPluginChannel( this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginMessageReceiver());
+        queryServerName();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
     }
@@ -50,5 +54,11 @@ public class Main extends JavaPlugin {
 
     public static Main getInstance() {
         return instance;
+    }
+
+    private void queryServerName() {
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        output.writeUTF("GetServer");
+        getServer().sendPluginMessage(Main.getInstance(), "BungeeCord", output.toByteArray());
     }
 }
