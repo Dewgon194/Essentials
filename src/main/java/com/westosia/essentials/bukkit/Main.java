@@ -5,6 +5,10 @@ import co.aikar.commands.PaperCommandManager;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.commands.*;
+import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeAdventureCmd;
+import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeCreativeCmd;
+import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSpectatorCmd;
+import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
 import com.westosia.essentials.core.homes.commands.DelHomeCmd;
 import com.westosia.essentials.core.homes.commands.HomeCmd;
@@ -37,7 +41,10 @@ public class Main extends JavaPlugin {
                 new CraftCmd(),
                 new FireballCmd(),
                 new HatCmd(),
-                new GameModeCmd()
+                new GamemodeAdventureCmd(),
+                new GamemodeCreativeCmd(),
+                new GamemodeSpectatorCmd(),
+                new GamemodeSurvivalCmd()
         );
 
         // register bungee plugin channel
