@@ -5,19 +5,15 @@ import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.core.homes.Home;
 import com.westosia.essentials.core.homes.HomeManager;
-import com.westosia.essentials.utils.LocationStrings;
-import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 public class PluginMessageReceiver implements PluginMessageListener {
 
