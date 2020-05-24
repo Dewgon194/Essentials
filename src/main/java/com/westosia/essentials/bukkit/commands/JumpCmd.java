@@ -5,9 +5,8 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import com.westosia.westosiaapi.WestosiaAPI;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -34,9 +33,13 @@ public class JumpCmd extends BaseCommand {
                 break;
             }else if (los.get(i).getType() != Material.AIR && los.get(i).getLocation().add(0, 1, 0).getBlock().getType() == Material.AIR) {
                 player.teleport(los.get(i).getLocation().add(0.5, 1, 0.5).setDirection(dir));
+                WestosiaAPI.getSoundEmitter().playSound(player.getLocation(), 10, Sound.ENTITY_ILLUSIONER_MIRROR_MOVE);
+                WestosiaAPI.getParticleEmitter().playParticle(player.getLocation(), Particle.SPELL_WITCH, 25, 1, 0.5, 1);
                 break;
             } else if (los.get(i).getType() != Material.AIR && los.get(i).getLocation().add(0, 1, 0).getBlock().getType() != Material.AIR) {
                 player.teleport(los.get(i - 2).getLocation().add(0.5, -1, 0.5).setDirection(dir));
+                WestosiaAPI.getSoundEmitter().playSound(player.getLocation(), 10, Sound.ENTITY_ILLUSIONER_MIRROR_MOVE);
+                WestosiaAPI.getParticleEmitter().playParticle(player.getLocation(), Particle.SPELL_WITCH, 25, 1, 0.5, 1);
                 break;
             } else if (los.get(i).getType() == Material.AIR && i == (los.size()-1)) {
                 player.sendMessage(ChatColor.RED + "Target is out of range.");
