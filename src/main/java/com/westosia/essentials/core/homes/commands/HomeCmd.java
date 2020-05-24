@@ -32,7 +32,7 @@ public class HomeCmd extends BaseCommand {
         }
         Home home = HomeManager.getHome(player, homeName);
         if (home != null) {
-            if (!home.getServerName().equalsIgnoreCase("thisserver")) {
+            if (!home.getServerName().equalsIgnoreCase(Main.getInstance().serverName)) {
                 sendToServer(player, home.getServerName());
             }
             // Wait 2 ticks in case player was sent to another server
