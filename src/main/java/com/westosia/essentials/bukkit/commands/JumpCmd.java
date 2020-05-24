@@ -5,9 +5,6 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
-import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
-import com.westosia.westosiaapi.WestosiaAPI;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,6 +37,9 @@ public class JumpCmd extends BaseCommand {
                 break;
             } else if (los.get(i).getType() != Material.AIR && los.get(i).getLocation().add(0, 1, 0).getBlock().getType() != Material.AIR) {
                 player.teleport(los.get(i - 2).getLocation().add(0.5, -1, 0.5).setDirection(dir));
+                break;
+            } else if (los.get(i).getType() == Material.AIR && i == (los.size()-1)) {
+                player.sendMessage(ChatColor.RED + "Target is out of range.");
                 break;
             }
         }
