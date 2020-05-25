@@ -46,7 +46,8 @@ public class Main extends JavaPlugin {
                 new GamemodeSpectatorCmd(),
                 new GamemodeSurvivalCmd(),
                 new FusCmd(),
-                new JumpCmd()
+                new JumpCmd(),
+                new RepairCmd()
         );
 
         // register bungee plugin channel

@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.westosia.westosiaapi.WestosiaAPI;
+import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ public class JumpCmd extends BaseCommand {
         int i = 0;
         for (i = 0; i < los.size(); i++) {
             if (dangerSources.contains(los.get(i).getType()) || dangerSources.contains(los.get(i).getLocation().add(0, 1, 0).getBlock().getType())) {
-                player.sendMessage(ChatColor.RED + "You cant jump into a source of danger!");
+                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You can't jump into a source of danger!");
                 break;
             }else if (los.get(i).getType() != Material.AIR && los.get(i).getLocation().add(0, 1, 0).getBlock().getType() == Material.AIR) {
                 player.teleport(los.get(i).getLocation().add(0.5, 1, 0.5).setDirection(dir));
@@ -42,7 +43,7 @@ public class JumpCmd extends BaseCommand {
                 WestosiaAPI.getParticleEmitter().playParticle(player.getLocation(), Particle.SPELL_WITCH, 25, 1, 0.5, 1);
                 break;
             } else if (los.get(i).getType() == Material.AIR && i == (los.size()-1)) {
-                player.sendMessage(ChatColor.RED + "Target is out of range.");
+                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Target is out of range!");
                 break;
             }
         }

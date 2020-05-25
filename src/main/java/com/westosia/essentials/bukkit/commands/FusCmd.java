@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.westosia.westosiaapi.WestosiaAPI;
+import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -73,6 +74,8 @@ public class FusCmd extends BaseCommand {
             } else if (shoutVictims.size() == 0) {
                 player.sendMessage(ChatColor.RED + "Your Godly Shout reached no ears!");
             }
+        } else if (args.length > 2){
+            WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You have entered too many arguments!");
         }
     }
 }
