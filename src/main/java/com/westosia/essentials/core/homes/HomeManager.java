@@ -14,11 +14,11 @@ public class HomeManager {
     private static Map<UUID, Map<String, Home>> playerHomes = new HashMap<>();
 
     public static Map<String, Home> getHomes(OfflinePlayer player) {
-        return playerHomes.get(player.getUniqueId());
+        return playerHomes.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
     }
 
     public static Home getHome(OfflinePlayer player, String home) {
-        Map<String, Home> homes = playerHomes.get(player.getUniqueId());
+        Map<String, Home> homes = getHomes(player);
         if (homes != null) {
             return homes.get(home);
         }
@@ -27,11 +27,9 @@ public class HomeManager {
 
     public static void cacheHome(Home home) {
         Map<String, Home> homes = getHomes(home.getOwner());
-        if (homes == null) {
-            homes = new HashMap<>();
-        }
         homes.put(home.getName(), home);
-        playerHomes.put(home.getOwner().getUniqueId(), homes);
+        playerHomes.replace(home.getOwner().getUniqueId(), homes);
+        //home.getOwner().getPlayer().sendMessage(getHomes(home.getOwner()).size() + " homes now");
     }
 
     public static void removeHome(Home home) {

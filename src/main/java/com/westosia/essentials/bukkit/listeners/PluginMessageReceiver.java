@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.core.homes.Home;
 import com.westosia.essentials.core.homes.HomeManager;
+import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
@@ -16,10 +17,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PluginMessageReceiver implements PluginMessageListener {
 
@@ -52,33 +50,17 @@ public class PluginMessageReceiver implements PluginMessageListener {
             // Grab the server name from Bungee; only runs on server enable
             Main.getInstance().serverName = in.readUTF();
         } else if (subChannel.equalsIgnoreCase("EssentialsHomes")) {
-            // Loading and saving homes
+            // Loading homes
             String action = in.readUTF();
             if (action.equalsIgnoreCase("load")) {
                 // Player has just joined; load from database
+                Logger.info("loading homes");
                 String uuidString = in.readUTF();
-                // TODO: database call here to retrieve homes belonging to the uuid
-                List<String> homeStrings = Arrays.asList("3ed02f6e-d12c-4040-9eb1-2da94d063cd9|Scone|westosia|(world|-2.53|72.00|168.28|72.20|-20.2)",
-                        "3ed02f6e-d12c-4040-9eb1-2da94d063cd9|Brem|westosia|(world|-26.94|87.50|211.45|32.70|0.50)"); // temp homes for testing
                 // Tell each server to load this player's homes via Redis
                 Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-                    homeStrings.forEach(homeString -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, homeString));
-                });
-            } else if (action.equalsIgnoreCase("unload")) {
-                // Player has left; send Redis message for all servers to unload and save to database
-                String uuidString = in.readUTF();
-                //TODO: figure out why the map of player homes is null
-                // it's probably either to do with OfflinePlayer or that Redis does things async
-                if (HomeManager.getHomes(Bukkit.getOfflinePlayer(UUID.fromString(uuidString))) == null) Bukkit.broadcastMessage("player homes is null");
-                Collection<Home> homes = HomeManager.getHomes(Bukkit.getOfflinePlayer(UUID.fromString(uuidString))).values();
-                Logger.info("unloading " + homes.size() + " homes");
-                Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-                    // Telling other servers to uncache homes through Redis
-                    homes.forEach(home -> {
-                        RedisConnector.getInstance().getConnection().publish(Main.getInstance().DEL_HOME_REDIS_CHANNEL, home.toString());
-                    });
-
-                    // TODO: Saving homes to database
+                    // Get homes from database
+                    Collection<Home> dbHomes = DatabaseEditor.getHomesInDB(UUID.fromString(uuidString)).values();
+                    dbHomes.forEach(home -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
                 });
             }
         }

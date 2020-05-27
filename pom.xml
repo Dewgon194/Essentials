@@ -49,6 +49,13 @@
             <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- DatabaseAPI -->
+        <dependency>
+            <groupId>com.westosia</groupId>
+            <artifactId>DatabaseAPI</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Westosia API -->
         <dependency>
             <groupId>com.westosia</groupId>
