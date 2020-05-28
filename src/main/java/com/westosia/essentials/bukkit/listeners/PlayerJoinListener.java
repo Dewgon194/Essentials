@@ -20,6 +20,6 @@ public class PlayerJoinListener implements Listener {
         // Tell Redis that this player joined a server, so that they don't get marked as logged off the network
         // and their homes uncached
         UUID uuid = event.getPlayer().getUniqueId();
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().CHANGE_SERVER_REDIS_CHANNEL, uuid.toString()));
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
     }
 }

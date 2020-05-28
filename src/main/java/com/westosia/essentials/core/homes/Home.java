@@ -26,7 +26,6 @@ public class Home {
         owner = uuid;
         this.name = name;
         this.server = server;
-        //TODO: round locations to two decimal places, we don't need massive .763892384843989
         this.location = LocationStrings.shrinkLoc(location);
     }
 

@@ -17,6 +17,10 @@ public class HomeManager {
         return playerHomes.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
     }
 
+    public static Map<String, Home> getHomes(UUID uuid) {
+        return playerHomes.computeIfAbsent(uuid, k -> new HashMap<>());
+    }
+
     public static Home getHome(OfflinePlayer player, String home) {
         Map<String, Home> homes = getHomes(player);
         if (homes != null) {

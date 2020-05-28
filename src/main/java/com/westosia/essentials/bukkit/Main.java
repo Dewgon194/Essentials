@@ -12,19 +12,34 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
+import com.westosia.essentials.core.homes.Home;
+import com.westosia.essentials.core.homes.HomeManager;
 import com.westosia.essentials.core.homes.commands.DelHomeCmd;
 import com.westosia.essentials.core.homes.commands.HomeCmd;
 import com.westosia.essentials.core.homes.commands.SetHomeCmd;
 import com.westosia.essentials.redis.ChangeServerListener;
 import com.westosia.essentials.redis.DelHomeListener;
+import com.westosia.essentials.redis.ServerChangeInfo;
 import com.westosia.essentials.redis.SetHomeListener;
 import com.westosia.essentials.utils.DatabaseEditor;
+import com.westosia.essentials.utils.ServerChangeHelper;
 import com.westosia.redisapi.redis.RedisConnector;
+import com.westosia.westosiaapi.utils.Logger;
 import com.westosia.westosiaapi.utils.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static com.westosia.essentials.core.homes.HomeManager.getHomes;
 
 public class Main extends JavaPlugin {
     public final String SET_HOME_REDIS_CHANNEL = "sethome";
@@ -73,9 +88,18 @@ public class Main extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
     }
 
-    //todo: what to do when server goes offline (or reloads? right now reloading means homes get yeeted)
+    //todo: fix task cuz now it doesnt work when it did earlier
+    // also instead of going through online, go through still cached homes
     public void onDisable() {
+        // Save to database on disable
+        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
 
+        ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
+        service.execute(() -> onlinePlayers.forEach((player) -> {
+            ServerChangeHelper.saveHomesToDB(player.getUniqueId().toString());
+            ServerChangeInfo.tellRedis(player.getUniqueId().toString(), "true", "db");
+        }));
+        service.shutdown();
     }
 
     private void registerCommands(BaseCommand... commands) {
