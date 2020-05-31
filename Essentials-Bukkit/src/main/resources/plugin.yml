@@ -1,0 +1,13 @@
+main: com.westosia.essentials.bukkit.Main
+name: Essentials
+version: 0.1
+authors:
+  - TheBirmanator
+  - TheMGRF
+  - JamieCee
+api-version: 1.15
+description: Essentials but only the essentials
+depend: [RedisAPI, DatabaseAPI, WestosiaAPI, ACFLoader]
+permissions:
+  essentials.*:
+    description: Gives access to all Essentials commands and permisions
