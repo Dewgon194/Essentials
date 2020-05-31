@@ -7,11 +7,16 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class HomeManager {
     // Maps a player ID to all their homes, which are each mapped by their name
     private static Map<UUID, Map<String, Home>> playerHomes = new HashMap<>();
+
+    public static Set<UUID> getCachedHomeOwners() {
+        return playerHomes.keySet();
+    }
 
     public static Map<String, Home> getHomes(OfflinePlayer player) {
         return playerHomes.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());

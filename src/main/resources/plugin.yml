@@ -4,7 +4,7 @@ version: 0.1
 author: TheBirmanator
 api-version: 1.15
 description: Essentials but only the essentials
-depend: [RedisAPI, DatabaseAPI, WestosiaAPI]
+depend: [RedisAPI, DatabaseAPI, WestosiaAPI, ACFLoader]
 permissions:
   essentials.*:
     description: Gives access to all Essentials commands and permisions

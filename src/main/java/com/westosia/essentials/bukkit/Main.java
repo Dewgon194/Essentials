@@ -27,14 +27,13 @@ import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.utils.Logger;
 import com.westosia.westosiaapi.utils.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -92,12 +91,13 @@ public class Main extends JavaPlugin {
     // also instead of going through online, go through still cached homes
     public void onDisable() {
         // Save to database on disable
-        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+        Set<UUID> cached = HomeManager.getCachedHomeOwners();
+        //Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
 
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-        service.execute(() -> onlinePlayers.forEach((player) -> {
-            ServerChangeHelper.saveHomesToDB(player.getUniqueId().toString());
-            ServerChangeInfo.tellRedis(player.getUniqueId().toString(), "true", "db");
+        service.execute(() -> cached.forEach((uuid) -> {
+            ServerChangeHelper.saveHomesToDB(uuid.toString());
+            ServerChangeInfo.tellRedis(uuid.toString(), "true", "db");
         }));
         service.shutdown();
     }
