@@ -2,9 +2,12 @@ package com.westosia.essentials;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BungeeCommandManager;
-import com.westosia.essentials.commands.TeleportCmd;
+import com.westosia.essentials.commands.*;
+import com.westosia.essentials.listeners.PlayerDisconnectListener;
 import com.westosia.essentials.listeners.PostLoginListener;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.PluginManager;
 
 public class Main extends Plugin {
 
@@ -13,9 +16,15 @@ public class Main extends Plugin {
     public void onEnable() {
         instance = this;
 
-        registerCommands(new TeleportCmd());
+        registerCommands(   new TeleportCmd(),
+                            new TpaCmd(),
+                            new TpaHereCmd(),
+                            new TpAcceptCmd(),
+                            new TpDenyCmd(),
+                            new TpCancelCmd());
 
-        getProxy().getPluginManager().registerListener(this, new PostLoginListener());
+        registerListeners(  new PostLoginListener(),
+                            new PlayerDisconnectListener());
     }
 
     private void registerCommands(BaseCommand... commands) {
@@ -25,6 +34,12 @@ public class Main extends Plugin {
         }
     }
 
+    private void registerListeners(Listener... listeners) {
+        PluginManager manager = getProxy().getPluginManager();
+        for (Listener listener : listeners) {
+            manager.registerListener(this, listener);
+        }
+    }
     public static Main getInstance() {
         return instance;
     }

@@ -1,7 +1,6 @@
 package com.westosia.essentials.bukkit;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.commands.*;
@@ -15,6 +14,7 @@ import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.homes.commands.DelHomeCmd;
 import com.westosia.essentials.homes.commands.HomeCmd;
+import com.westosia.essentials.homes.commands.HomesCmd;
 import com.westosia.essentials.homes.commands.SetHomeCmd;
 import com.westosia.essentials.redis.ChangeServerListener;
 import com.westosia.essentials.redis.DelHomeListener;
@@ -61,6 +61,7 @@ public class Main extends JavaPlugin {
                 new SetHomeCmd(),
                 new HomeCmd(),
                 new DelHomeCmd(),
+                new HomesCmd(),
                 new BurnCmd(),
                 new CraftCmd(),
                 new FireballCmd(),

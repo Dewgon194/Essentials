@@ -15,9 +15,7 @@ public class PostLoginListener implements Listener {
 
     @EventHandler
     public void onLogin(PostLoginEvent event) {
-        // if doesnt work, use serverconnectevent and proxy join reason with a server instead of a player
         ProxyServer.getInstance().getScheduler().schedule(Main.getInstance(), () -> sendLoadRequest(event.getPlayer()), 1, TimeUnit.SECONDS);
-        //sendLoadRequest(event.getPlayer());
     }
 
     private void sendLoadRequest(ProxiedPlayer player) {
@@ -26,6 +24,8 @@ public class PostLoginListener implements Listener {
         out.writeUTF("load");
         out.writeUTF(player.getUniqueId().toString());
 
-        player.getServer().getInfo().sendData("BungeeCord", out.toByteArray());
+        if (player.getServer() != null && player.getServer().getInfo() != null) {
+            player.getServer().getInfo().sendData("BungeeCord", out.toByteArray());
+        }
     }
 }
