@@ -1,5 +1,7 @@
 package com.westosia.essentials.utils;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.westosia.essentials.Main;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -11,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class TeleportRequest {
-
+//TODO: probably implement this into /tp
     // Maps the receiver of a teleport request to the teleport request
     private static Map<ProxiedPlayer, TeleportRequest> requests = new HashMap<>();
 
@@ -42,11 +44,33 @@ public class TeleportRequest {
     public void use(boolean accepted) {
         stopExpirationTimer();
         if (accepted) {
-
-        } else {
-
+            checkServers();
+            ProxyServer.getInstance().getScheduler().schedule(Main.getInstance(), this::notifyBukkit, 1, TimeUnit.SECONDS);
         }
         requests.remove(getReceiver());
+    }
+
+    private void checkServers() {
+        if (getWhoTeleports().getServer().getInfo() != getTarget().getServer().getInfo()) {
+            getWhoTeleports().connect(getTarget().getServer().getInfo());
+        }
+    }
+
+    public ProxiedPlayer getWhoTeleports() {
+        ProxiedPlayer teleporting = getReceiver();
+        if (teleporting.equals(getTarget())) {
+            teleporting = getSender();
+        }
+        return teleporting;
+    }
+
+    private void notifyBukkit() {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("EssentialsTP");
+        out.writeUTF(getWhoTeleports().getName());
+        out.writeUTF(getTarget().getName());
+
+        getTarget().getServer().getInfo().sendData("BungeeCord", out.toByteArray());
     }
 
     public static TeleportRequest getActiveTeleportRequest(ProxiedPlayer receiver) {
