@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class TeleportRequest {
-//TODO: probably implement this into /tp
     // Maps the receiver of a teleport request to the teleport request
     private static Map<ProxiedPlayer, TeleportRequest> requests = new HashMap<>();
 

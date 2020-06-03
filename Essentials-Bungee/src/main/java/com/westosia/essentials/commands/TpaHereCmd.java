@@ -3,8 +3,8 @@ package com.westosia.essentials.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.westosia.essentials.utils.TeleportRequest;
+import com.westosia.essentials.utils.Text;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 @CommandAlias("tpahere")
@@ -18,13 +18,17 @@ public class TpaHereCmd extends BaseCommand {
         if (args.length > 0) {
             ProxiedPlayer playerSendTo = ProxyServer.getInstance().getPlayer(args[0]);
             if (playerSendTo != null) {
-                TeleportRequest currentRequest = TeleportRequest.getActiveTeleportRequest(playerSendTo);
-                if (currentRequest != null && currentRequest.getSender().equals(player)) {
-                    player.sendMessage(new TextComponent("you've already sent this player a tp request. wait a moment"));
+                if (!playerSendTo.equals(player)) {
+                    TeleportRequest currentRequest = TeleportRequest.getActiveTeleportRequest(playerSendTo);
+                    if (currentRequest != null && currentRequest.getSender().equals(player)) {
+                        player.sendMessage(Text.format("&4&l(!) &cYou've already sent &f" + playerSendTo.getName() + "&c a request. Please wait a moment before sending them another"));
+                    } else {
+                        new TeleportRequest(player, playerSendTo, player);
+                        player.sendMessage(Text.format("&3&l(!) &bSent a request for &f" + playerSendTo.getName() + " &bto teleport to you"));
+                        playerSendTo.sendMessage(Text.format("&3&l(!) &f" + player.getName() + " &bhas requested that you teleport to them"));
+                    }
                 } else {
-                    new TeleportRequest(player, playerSendTo, player);
-                    player.sendMessage(new TextComponent("sent tpahere request to " + playerSendTo.getName()));
-                    playerSendTo.sendMessage(new TextComponent(player.getName() + " has requested that you teleport to them"));
+                    player.sendMessage(Text.format("&4&l(!) &cYou cannot send yourself a teleport request"));
                 }
             }
         }
