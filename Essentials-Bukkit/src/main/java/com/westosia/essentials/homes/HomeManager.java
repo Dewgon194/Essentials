@@ -1,6 +1,7 @@
 package com.westosia.essentials.homes;
 
 import com.westosia.essentials.utils.LocationStrings;
+import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.OfflinePlayer;
 
 import java.util.HashMap;

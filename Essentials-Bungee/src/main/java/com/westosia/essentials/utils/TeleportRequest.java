@@ -43,16 +43,22 @@ public class TeleportRequest {
     public void use(boolean accepted) {
         stopExpirationTimer();
         if (accepted) {
-            checkServers();
-            ProxyServer.getInstance().getScheduler().schedule(Main.getInstance(), this::notifyBukkit, 1, TimeUnit.SECONDS);
+            int waitTime = 0;
+            if (changedServers()) {
+                waitTime = 100;
+            }
+            ProxyServer.getInstance().getScheduler().schedule(Main.getInstance(), this::notifyBukkit, waitTime, TimeUnit.MILLISECONDS);
         }
         requests.remove(getReceiver());
     }
 
-    private void checkServers() {
+    private boolean changedServers() {
+        boolean changedServers = false;
         if (getWhoTeleports().getServer().getInfo() != getTarget().getServer().getInfo()) {
+            changedServers = true;
             getWhoTeleports().connect(getTarget().getServer().getInfo());
         }
+        return changedServers;
     }
 
     public ProxiedPlayer getWhoTeleports() {

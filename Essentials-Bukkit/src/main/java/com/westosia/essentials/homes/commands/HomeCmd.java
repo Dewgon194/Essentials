@@ -36,24 +36,23 @@ public class HomeCmd extends BaseCommand {
                 sendToServer(player, home.getServerName());
             }
             // Wait 2 ticks in case player was sent to another server
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> sendHomeData(home), 2);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> sendHomeData(home, player), 2);
         } else {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The home &f" + homeName + " &cdoes not exist");
         }
     }
-
-    private void sendToServer(Player player, String serverName) {
+//TODO: not have these as static methods in a cmd class for cross class use
+    public static void sendToServer(Player player, String serverName) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
         out.writeUTF(serverName);
         player.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
     }
 
-    private void sendHomeData(Home home) {
-        Player player = home.getOwner().getPlayer();
+    public static void sendHomeData(Home home, Player playerUsing) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("ForwardToPlayer");
-        out.writeUTF(player.getName());
+        out.writeUTF(playerUsing.getName());
         out.writeUTF("EssentialsSendToHome");
 
         ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
@@ -66,6 +65,6 @@ public class HomeCmd extends BaseCommand {
 
         out.writeShort(msgbytes.toByteArray().length);
         out.write(msgbytes.toByteArray());
-        player.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
+        playerUsing.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
     }
 }

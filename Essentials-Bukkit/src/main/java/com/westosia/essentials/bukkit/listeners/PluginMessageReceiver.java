@@ -41,7 +41,7 @@ public class PluginMessageReceiver implements PluginMessageListener {
             try {
                 String homeString = msgin.readUTF();
                 Home home = HomeManager.fromString(homeString);
-                home.use();
+                player.teleport(home.getLocation());
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Teleported to home &f" + home.getName());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -56,12 +56,15 @@ public class PluginMessageReceiver implements PluginMessageListener {
                 // Player has just joined; load from database
                 Logger.info("loading homes");
                 String uuidString = in.readUTF();
-                // Tell each server to load this player's homes via Redis
-                Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-                    // Get homes from database
-                    Collection<Home> dbHomes = DatabaseEditor.getHomesInDB(UUID.fromString(uuidString)).values();
-                    dbHomes.forEach(home -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
-                });
+                // Only load if they aren't already loaded
+                if (HomeManager.getHomes(UUID.fromString(uuidString)) == null || HomeManager.getHomes(UUID.fromString(uuidString)).isEmpty()) {
+                    // Tell each server to load this player's homes via Redis
+                    Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
+                        // Get homes from database
+                        Collection<Home> dbHomes = DatabaseEditor.getHomesInDB(UUID.fromString(uuidString)).values();
+                        dbHomes.forEach(home -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
+                    });
+                }
             }
         }
     }

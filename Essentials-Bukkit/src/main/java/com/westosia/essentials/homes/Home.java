@@ -22,7 +22,7 @@ public class Home {
         this.location = LocationStrings.shrinkLoc(location);
     }
 
-    Home(UUID uuid, String name, String server, Location location) {
+    public Home(UUID uuid, String name, String server, Location location) {
         owner = uuid;
         this.name = name;
         this.server = server;

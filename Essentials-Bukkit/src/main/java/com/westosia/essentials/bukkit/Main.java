@@ -43,6 +43,7 @@ public class Main extends JavaPlugin {
     private static Main instance;
 
     public void onEnable() {
+        //TODO: if people are on when enabled, load them in from db to prevent yeeting of homes on reload
         instance = this;
         checkDB();
         RedisConnector.getInstance().listenForChannel(SET_HOME_REDIS_CHANNEL, new SetHomeListener());
@@ -83,8 +84,6 @@ public class Main extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
     }
 
-    //todo: fix task cuz now it doesnt work when it did earlier
-    // also instead of going through online, go through still cached homes
     public void onDisable() {
         // Save to database on disable
         Set<UUID> cached = HomeManager.getCachedHomeOwners();

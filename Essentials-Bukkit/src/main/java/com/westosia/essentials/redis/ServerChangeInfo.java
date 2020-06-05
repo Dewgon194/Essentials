@@ -7,19 +7,19 @@ public class ServerChangeInfo {
 
     public static boolean isChangingServers(String uuid) {
         String changingStatus = RedisConnector.getInstance().getConnection().get("homes." + uuid + ".changing-servers");
-        changingStatus = changingStatus.split(":")[0];
+        changingStatus = changingStatus.split(":++")[0];
         return changingStatus.equalsIgnoreCase("true");
     }
 
     public static boolean savedToDbOnChange(String uuid) {
         String changingStatus = RedisConnector.getInstance().getConnection().get("homes." + uuid + ".changing-servers");
-        changingStatus = changingStatus.split(":")[1];
+        changingStatus = changingStatus.split(":++")[1];
         return changingStatus.equalsIgnoreCase("db");
     }
 
     public static String disconnectedFrom(String uuid) {
         String changingStatus = RedisConnector.getInstance().getConnection().get("homes." + uuid + ".changing-servers");
-        changingStatus = changingStatus.split(":")[2];
+        changingStatus = changingStatus.split(":++")[2];
         return changingStatus;
     }
 
