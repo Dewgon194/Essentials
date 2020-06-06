@@ -38,21 +38,18 @@
             <groupId>com.westosia</groupId>
             <artifactId>RedisAPI</artifactId>
             <version>1.1.0</version>
-            <scope>provided</scope>
         </dependency>
         <!-- DatabaseAPI -->
         <dependency>
             <groupId>com.westosia</groupId>
             <artifactId>DatabaseAPI</artifactId>
             <version>1.0.0</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Westosia API -->
         <dependency>
             <groupId>com.westosia</groupId>
             <artifactId>WestosiaAPI</artifactId>
             <version>1.2.0</version>
-            <scope>provided</scope>
         </dependency>
         <!-- ACF Paper (Commands) -->
         <dependency>
