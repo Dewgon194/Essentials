@@ -11,6 +11,7 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
+import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.homes.commands.DelHomeCmd;
 import com.westosia.essentials.homes.commands.HomeCmd;
@@ -25,6 +26,7 @@ import com.westosia.essentials.utils.ServerChangeHelper;
 import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.utils.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,9 +45,15 @@ public class Main extends JavaPlugin {
     private static Main instance;
 
     public void onEnable() {
-        //TODO: if people are on when enabled, load them in from db to prevent yeeting of homes on reload
         instance = this;
         checkDB();
+        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+        // If people are on when enabled, load them in from db to prevent yeeting of homes on reload
+        // This really shouldn't be done live anyways. Repeated reloads produces odd behaviour from the Redis listeners
+        players.forEach((player) -> {
+            Collection<Home> homes = DatabaseEditor.getHomesInDB(player.getUniqueId()).values();
+            homes.forEach(HomeManager::cacheHome);
+        });
         RedisConnector.getInstance().listenForChannel(SET_HOME_REDIS_CHANNEL, new SetHomeListener());
         RedisConnector.getInstance().listenForChannel(DEL_HOME_REDIS_CHANNEL, new DelHomeListener());
         RedisConnector.getInstance().listenForChannel(CHANGE_SERVER_REDIS_CHANNEL, new ChangeServerListener());
@@ -87,7 +95,6 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         // Save to database on disable
         Set<UUID> cached = HomeManager.getCachedHomeOwners();
-        //Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
 
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
         service.execute(() -> cached.forEach((uuid) -> {

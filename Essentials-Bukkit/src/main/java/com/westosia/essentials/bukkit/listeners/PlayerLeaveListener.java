@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public class PlayerLeaveListener implements Listener {
 
+    //TODO: fix this sometimes saving on leave when it shouldnt. may happen when there is one home in memory and none in db?
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         // Tell Redis that this player is changing servers
