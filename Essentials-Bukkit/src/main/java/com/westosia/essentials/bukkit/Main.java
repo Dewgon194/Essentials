@@ -1,6 +1,7 @@
 package com.westosia.essentials.bukkit;
 
-import co.aikar.commands.*;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.PaperCommandManager;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.commands.*;
@@ -31,11 +32,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import static com.westosia.essentials.homes.HomeManager.getHomes;
 
 public class Main extends JavaPlugin {
     public final String SET_HOME_REDIS_CHANNEL = "sethome";
@@ -47,6 +48,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         checkDB();
+        checkNickDB();
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         // If people are on when enabled, load them in from db to prevent yeeting of homes on reload
         // This really shouldn't be done live anyways. Repeated reloads produces odd behaviour from the Redis listeners
@@ -81,7 +83,8 @@ public class Main extends JavaPlugin {
                 new GamemodeSurvivalCmd(),
                 new FusCmd(),
                 new JumpCmd(),
-                new RepairCmd()
+                new RepairCmd(),
+                new NickCmd()
         );
 
         // register bungee plugin channel
@@ -133,6 +136,15 @@ public class Main extends JavaPlugin {
             boolean exists = DatabaseEditor.checkIfTableExists();
             if (!exists) {
                 DatabaseEditor.createTable();
+            }
+        });
+    }
+
+    private void checkNickDB() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            boolean exists = DatabaseEditor.checkIfNickTableExists();
+            if (!exists) {
+                DatabaseEditor.createNickTable();
             }
         });
     }

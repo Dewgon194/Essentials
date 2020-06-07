@@ -1,6 +1,7 @@
 package com.westosia.essentials.bukkit.listeners;
 
 import com.westosia.essentials.bukkit.Main;
+import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.redisapi.redis.RedisConnector;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -21,5 +22,6 @@ public class PlayerJoinListener implements Listener {
         // and their homes uncached
         UUID uuid = event.getPlayer().getUniqueId();
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
+        event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
     }
 }

@@ -18,6 +18,9 @@ public class DatabaseEditor {
     private static final String COLUMN_UUID = "uuid";
     private static final String COLUMN_HOME_NAME = "home_name";
     private static final String COLUMN_HOME_STRING = "home_string";
+    private static final String NICKNAME_TABLE = "nicknames";
+    private static final String COLUMN_NICKNAME = "nickname";
+
 
     public static void createTable() {
         //"CREATE DATABASE 'essentials'"
@@ -29,6 +32,20 @@ public class DatabaseEditor {
             ps.execute();
             ps.close();
             con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createNickTable() {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("CREATE TABLE " + NICKNAME_TABLE +
+                    " (" + COLUMN_UUID + " varchar(36), " +
+                    COLUMN_NICKNAME + " varchar(255));");
+            ps.execute();
+            ps.close();
+            con.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -51,6 +68,25 @@ public class DatabaseEditor {
         }
         return exists;
     }
+
+    public static boolean checkIfNickTableExists() {
+        boolean exists = false;
+        //TODO: check and create database & table code?
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            if (con == null) Logger.warning("con is null");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + NICKNAME_TABLE + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                exists = true;
+            }
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
 
     public static Map<String, Home> getHomesInDB(UUID uuid) {
         Map<String, Home> homesInDB = new HashMap<>();
@@ -77,7 +113,7 @@ public class DatabaseEditor {
         String sql = "UPDATE " + HOMES_TABLE +
                 " SET " + COLUMN_HOME_STRING + " = '" + home.toString() +
                 "' WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
-                "' AND " + COLUMN_HOME_NAME + " = '" + home.getName()+ "';";
+                "' AND " + COLUMN_HOME_NAME + " = '" + home.getName() + "';";
         if (newEntry) {
             sql = "INSERT INTO " + HOMES_TABLE + " VALUES ('" + uuid.toString() + "', '" +
                     home.getName() + "', '" + home.toString() + "');";
@@ -98,6 +134,49 @@ public class DatabaseEditor {
             PreparedStatement ps = con.prepareStatement("DELETE FROM " + HOMES_TABLE +
                     " WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
                     "' AND " + COLUMN_HOME_NAME + " = '" + home.getName() + "';");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveNick(String nick, UUID uuid) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO nicknames (uuid, nickname) VALUES ('" + uuid.toString() + "', '" + nick + "') ON DUPLICATE KEY UPDATE nickname = '" + nick + "';"
+            );
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static String getNick(UUID uuid) {
+        String nickname = "";
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT nickname FROM nicknames WHERE uuid = '" + uuid.toString() + "' LIMIT 1;"
+            );
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                nickname = rs.getString("nickname");
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nickname;
+    }
+
+    public static void removeNick(UUID uuid) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("DELETE FROM nicknames WHERE uuid = '" + uuid.toString() + "';"
+            );
             ps.execute();
             ps.close();
             con.close();
