@@ -4,7 +4,6 @@ import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
-import com.westosia.redisapi.redis.RedisConnector;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,8 +31,6 @@ public class PlayerJoinListener implements Listener {
             RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
         }
         //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
-        event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
         if (DatabaseEditor.getNick(uuid) != null) {
             event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
         }
