@@ -33,5 +33,9 @@ public class PlayerJoinListener implements Listener {
         }
         //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
         event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
+        if (DatabaseEditor.getNick(uuid) != null) {
+            event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
+        }
     }
 }
