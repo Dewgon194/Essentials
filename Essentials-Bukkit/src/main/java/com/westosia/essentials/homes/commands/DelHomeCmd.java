@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Description;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
@@ -23,7 +24,8 @@ public class DelHomeCmd extends BaseCommand {
         if (args.length > 0) {
             Home home = HomeManager.getHome(player, args[0]);
             if (home != null) {
-                RedisConnector.getInstance().getConnection().publish(Main.getInstance().DEL_HOME_REDIS_CHANNEL, home.toString());
+                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, home.toString());
+                //RedisConnector.getInstance().getConnection().publish(Main.getInstance().DEL_HOME_REDIS_CHANNEL, home.toString());
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Home &f" + args[0] + "&a removed");
             } else {
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Home &f" + args[0] + "&c not found");

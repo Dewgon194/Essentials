@@ -2,6 +2,8 @@ package com.westosia.essentials.bukkit.listeners;
 
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.utils.DatabaseEditor;
+import com.westosia.essentials.utils.RedisAnnouncer;
+import com.westosia.essentials.utils.ServerChange;
 import com.westosia.redisapi.redis.RedisConnector;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -21,7 +23,15 @@ public class PlayerJoinListener implements Listener {
         // Tell Redis that this player joined a server, so that they don't get marked as logged off the network
         // and their homes uncached
         UUID uuid = event.getPlayer().getUniqueId();
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
+        if (ServerChange.isChangingServers(uuid)) {
+            ServerChange serverChange = ServerChange.getServerChange(uuid);
+            if (serverChange.getToServer().isEmpty()) {
+                serverChange.setToServer(Main.getInstance().serverName);
+            }
+            serverChange.setComplete(true);
+            RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
+        }
+        //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
         event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
     }
 }

@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Description;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
@@ -20,6 +21,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
 @CommandAlias("sethome")
@@ -33,9 +35,15 @@ public class SetHomeCmd extends BaseCommand {
         if (args.length > 0) {
             homeName = args[0];
         }
-        if (HomeManager.getHomes(player).size() < getHomesAmount(player)) {
+        Map<String, Home> homes = HomeManager.getHomes(player);
+        int size = 0;
+        if (homes != null) {
+            size = homes.size();
+        }
+        if (size < getHomesAmount(player)) {
             Home home = new Home(player, homeName, Main.getInstance().serverName, player.getLocation());
-            Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
+            RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString());
+            //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Set home &f" + homeName + " &ato your location");
         } else {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You have reached the max amount of homes you can set");
@@ -44,6 +52,7 @@ public class SetHomeCmd extends BaseCommand {
 
     private int getHomesAmount(Player player) {
         if (player.isOp() || player.hasPermission("*") || player.hasPermission("essentials.*")) return 100;
+
         String permissionExceptAmount = "essentials.homes.amount.";
         int highestAmount = 0;
         for (PermissionAttachmentInfo perm : player.getEffectivePermissions()) {

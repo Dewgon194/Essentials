@@ -10,6 +10,7 @@ import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.utils.ServerChange;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.Bukkit;
@@ -33,15 +34,18 @@ public class HomeCmd extends BaseCommand {
         Home home = HomeManager.getHome(player, homeName);
         if (home != null) {
             if (!home.getServerName().equalsIgnoreCase(Main.getInstance().serverName)) {
-                sendToServer(player, home.getServerName());
+                //sendToServer(player, home.getServerName());
+                ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.HOME_TELEPORT, Main.getInstance().serverName, home.getServerName());
+                serverChange.send();
             }
             // Wait 2 ticks in case player was sent to another server
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> sendHomeData(home, player), 2);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> HomeManager.sendHomeData(home, player), 2);
         } else {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The home &f" + homeName + " &cdoes not exist");
         }
     }
 //TODO: not have these as static methods in a cmd class for cross class use
+    /*
     public static void sendToServer(Player player, String serverName) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
@@ -66,5 +70,5 @@ public class HomeCmd extends BaseCommand {
         out.writeShort(msgbytes.toByteArray().length);
         out.write(msgbytes.toByteArray());
         playerUsing.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
-    }
+    }*/
 }
