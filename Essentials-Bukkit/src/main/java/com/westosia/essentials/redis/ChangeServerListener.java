@@ -18,6 +18,7 @@ public class ChangeServerListener implements RedisChannelListener {
     public void messageReceived(String message) {
         ServerChange serverChange = ServerChange.fromString(message);
         serverChange.cache();
+        // Testing branches
         if (Main.getInstance().isEnabled()) {
             // This is for a start server change
             if (ServerChange.isChangingServers(serverChange.getWhosChanging())) {
