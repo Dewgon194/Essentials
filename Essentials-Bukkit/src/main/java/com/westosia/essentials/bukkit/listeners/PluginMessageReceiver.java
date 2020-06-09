@@ -58,12 +58,19 @@ public class PluginMessageReceiver implements PluginMessageListener {
                 Logger.info("loading homes");
                 String uuidString = in.readUTF();
                 // Only load if they aren't already loaded
-                if (HomeManager.getHomes(UUID.fromString(uuidString)) == null /*|| HomeManager.getHomes(UUID.fromString(uuidString)).isEmpty()*/) {
+                if (HomeManager.getHomes(UUID.fromString(uuidString)) == null) {
+                    Logger.info(uuidString  + " needs homes loaded");
                     // Tell each server to load this player's homes via Redis
                     Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
                         // Get homes from database
                         Collection<Home> dbHomes = DatabaseEditor.getHomesInDB(UUID.fromString(uuidString)).values();
-                        dbHomes.forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString()));
+                        if (!dbHomes.isEmpty()) {
+                            Logger.info(uuidString  + " loading homes from db");
+                            dbHomes.forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString()));
+                        } else {
+                            Logger.info(uuidString  + " no homes found, creating empty entry");
+                            RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, uuidString);
+                        }
                         //dbHomes.forEach(home -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
                     });
                 }

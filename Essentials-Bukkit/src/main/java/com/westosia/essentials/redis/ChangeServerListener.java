@@ -18,13 +18,14 @@ public class ChangeServerListener implements RedisChannelListener {
     public void messageReceived(String message) {
         ServerChange serverChange = ServerChange.fromString(message);
         serverChange.cache();
-        // Testing branches
         if (Main.getInstance().isEnabled()) {
             // This is for a start server change
             if (ServerChange.isChangingServers(serverChange.getWhosChanging())) {
                 // Start a timer for 5 seconds, if the ServerChange hasn't updated, they are offline
                 Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
                     // Player has not connected to another server in 5 seconds, assume them offline
+                    //TODO: figure out why it still sees an incomplete server switch when you leave and rejoin same server
+                    // quickly
                     if (ServerChange.isChangingServers(serverChange.getWhosChanging())) {
                         //Collection<Home> homes = new ArrayList<>(HomeManager.getHomes(serverChange.getWhosChanging()).values());
                         // Already saved to database, just uncache locally

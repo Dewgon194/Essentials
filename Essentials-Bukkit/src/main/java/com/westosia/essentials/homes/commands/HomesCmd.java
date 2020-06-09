@@ -38,8 +38,6 @@ public class HomesCmd extends BaseCommand {
                 UUID uuid = Bukkit.getPlayerUniqueId(args[0]);
                 if (uuid != null) {
                     Map<String, Home> homes;
-                    //TODO: find out why it'll report no homes even with the other player on
-                    // the player who owns the homes can even still see them!
                     if (!HomeManager.hasHomesLoaded(uuid)) {
                         // Load homes in
                         homes = loadHomes(uuid);
@@ -50,7 +48,7 @@ public class HomesCmd extends BaseCommand {
                     } else {
                         homes = HomeManager.getHomes(uuid);
                     }
-                    if (homes.size() > 1) {
+                    if (homes.size() > 0) {
                         String homeList = getHomesList(homes.keySet());
                         WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Found homes " + homeList);
                     } else {
@@ -100,9 +98,12 @@ public class HomesCmd extends BaseCommand {
         FutureTask<Map<String, Home>> future = new FutureTask<>(() -> {
             // Get homes from database
             Map<String, Home> dbHomes = DatabaseEditor.getHomesInDB(uuid);
-            // Load them into Redis
-            dbHomes.values().forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString()));
-            //dbHomes.forEach(home -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
+            if (dbHomes.size() > 0) {
+                // Load them into Redis
+                dbHomes.values().forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString()));
+            } else {
+                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, uuid.toString());
+            }
             return dbHomes;
         });
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);

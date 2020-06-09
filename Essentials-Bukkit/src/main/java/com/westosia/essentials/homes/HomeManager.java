@@ -63,6 +63,10 @@ public class HomeManager {
         }
     }
 
+    public static void newEntry(UUID uuid) {
+        playerHomes.put(uuid, new HashMap<>());
+    }
+
     public static void removePlayer(UUID uuid) {
         playerHomes.remove(uuid);
     }
