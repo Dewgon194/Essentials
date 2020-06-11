@@ -44,31 +44,4 @@ public class HomeCmd extends BaseCommand {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The home &f" + homeName + " &cdoes not exist");
         }
     }
-//TODO: not have these as static methods in a cmd class for cross class use
-    /*
-    public static void sendToServer(Player player, String serverName) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Connect");
-        out.writeUTF(serverName);
-        player.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
-    }
-
-    public static void sendHomeData(Home home, Player playerUsing) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("ForwardToPlayer");
-        out.writeUTF(playerUsing.getName());
-        out.writeUTF("EssentialsSendToHome");
-
-        ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-        DataOutputStream msgout = new DataOutputStream(msgbytes);
-        try {
-            msgout.writeUTF(home.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        out.writeShort(msgbytes.toByteArray().length);
-        out.write(msgbytes.toByteArray());
-        playerUsing.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
-    }*/
 }

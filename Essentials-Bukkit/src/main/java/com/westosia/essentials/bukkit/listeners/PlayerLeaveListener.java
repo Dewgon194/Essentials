@@ -25,14 +25,4 @@ public class PlayerLeaveListener implements Listener {
         ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.VOLUNTARY, Main.getInstance().serverName);
         RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
     }
-/*
-    @EventHandler
-    public void onKick(PlayerKickEvent event) {
-        // Player was kicked due to server shutting down/restarting
-        if (event.getReason().equals(Bukkit.getShutdownMessage())) {
-            UUID uuid = event.getPlayer().getUniqueId();
-            ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.SERVER_DOWN, Main.getInstance().serverName);
-            RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
-        }
-    }*/
 }

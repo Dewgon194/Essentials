@@ -7,7 +7,6 @@ import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.essentials.utils.RedisAnnouncer;
-import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import com.westosia.westosiaapi.utils.Logger;

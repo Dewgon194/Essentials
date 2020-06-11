@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,9 +62,6 @@ public class ServerChange {
 
     public void setComplete(boolean complete) {
         isComplete = complete;
-        if (complete) {
-            serverChanges.remove(uuid);
-        }
     }
 
     public void cache() {
@@ -91,12 +89,9 @@ public class ServerChange {
     }
 
     public static ServerChange fromString(String serverChangeString) {
-        Logger.info(serverChangeString);
         String[] split = serverChangeString.split("\\|");
-        ServerChange serverChange = new ServerChange(UUID.fromString(split[0]), Reason.valueOf(split[1]), split[2]);
-        if (split.length > 3 && !split[3].isEmpty()) {
-            serverChange.setToServer(split[3]);
-        }
+        ServerChange serverChange = new ServerChange(UUID.fromString(split[0]), Reason.valueOf(split[1]), split[2], split[3]);
+        serverChange.setComplete(Boolean.parseBoolean(split[4]));
         return serverChange;
     }
 
