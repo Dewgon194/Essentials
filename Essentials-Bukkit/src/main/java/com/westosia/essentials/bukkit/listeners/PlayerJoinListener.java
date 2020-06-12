@@ -1,10 +1,14 @@
 package com.westosia.essentials.bukkit.listeners;
 
 import com.westosia.essentials.bukkit.Main;
+import com.westosia.essentials.homes.Home;
+import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
 import com.westosia.redisapi.redis.RedisConnector;
+import com.westosia.westosiaapi.WestosiaAPI;
+import com.westosia.westosiaapi.api.Notifier;
 import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -36,6 +40,14 @@ public class PlayerJoinListener implements Listener {
                     }
                     serverChange.setComplete(true);
                     RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
+
+                    // Send player to home if that's the server change reason
+                    if (serverChange.getReason() == ServerChange.Reason.HOME_TELEPORT) {
+                        String homeString = serverChange.readInfo();
+                        Home home = HomeManager.fromString(homeString);
+                        event.getPlayer().teleport(home.getLocation());
+                        WestosiaAPI.getNotifier().sendChatMessage(event.getPlayer(), Notifier.NotifyStatus.SUCCESS, "Teleported to home &f" + home.getName());
+                    }
                 }
             }
         }, 10);

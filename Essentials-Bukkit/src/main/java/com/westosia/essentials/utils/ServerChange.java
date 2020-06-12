@@ -3,13 +3,9 @@ package com.westosia.essentials.utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.Main;
-import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ServerChange {
 
@@ -17,6 +13,7 @@ public class ServerChange {
     private Reason reason;
     private String fromServer, toServer;
     private boolean isComplete;
+    private List<String> redisInfo;
 
     private static Map<UUID, ServerChange> serverChanges = new HashMap<>();
 
@@ -26,6 +23,7 @@ public class ServerChange {
         this.fromServer = fromServer;
         toServer = "";
         isComplete = false;
+        redisInfo = new ArrayList<>();
     }
 
     public ServerChange(UUID uuid, Reason reason, String fromServer, String toServer) {
@@ -34,6 +32,7 @@ public class ServerChange {
         this.fromServer = fromServer;
         this.toServer = toServer;
         isComplete = false;
+        redisInfo = new ArrayList<>();
     }
 
     public UUID getWhosChanging() {
@@ -64,6 +63,21 @@ public class ServerChange {
         isComplete = complete;
     }
 
+    public void addRedisInfo(String info) {
+        redisInfo.add(info);
+    }
+
+    public void removeRedisInfo(String info) {
+        redisInfo.remove(info);
+    }
+
+    public String readInfo() {
+        if (redisInfo.size() > 0) {
+            return redisInfo.remove(0);
+        }
+        return null;
+    }
+
     public void cache() {
         serverChanges.put(uuid, this);
     }
@@ -81,17 +95,30 @@ public class ServerChange {
 
     @Override
     public String toString() {
+        StringBuilder infoString = new StringBuilder();
+        redisInfo.forEach((info) -> {
+            infoString.append("{")
+                    .append(info)
+                    .append("}");
+        });
+        String info = infoString.toString();
         return uuid.toString() + "|" +
                 reason.name() + "|" +
                 fromServer + "|" +
                 toServer + "|" +
-                isComplete;
+                isComplete + "|" +
+                info;
     }
 
     public static ServerChange fromString(String serverChangeString) {
         String[] split = serverChangeString.split("\\|");
         ServerChange serverChange = new ServerChange(UUID.fromString(split[0]), Reason.valueOf(split[1]), split[2], split[3]);
         serverChange.setComplete(Boolean.parseBoolean(split[4]));
+        String infoStrings = split[5];
+        String[] infoSplit = infoStrings.split("[{}]+");
+        for (String info : infoSplit) {
+            serverChange.addRedisInfo(info);
+        }
         return serverChange;
     }
 
