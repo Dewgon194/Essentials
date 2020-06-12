@@ -10,6 +10,7 @@ import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
+import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import com.westosia.westosiaapi.utils.Logger;
@@ -29,10 +30,14 @@ public class HomeCmd extends BaseCommand {
         }
         Home home = HomeManager.getHome(player, homeName);
         if (home != null) {
+            //Logger.info("home name: " + home.getServerName());
+            //Logger.info("server name: " + Main.getInstance().serverName);
             if (!home.getServerName().equalsIgnoreCase(Main.getInstance().serverName)) {
                 ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.HOME_TELEPORT, Main.getInstance().serverName, home.getServerName());
+                //RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, "sent server change");
                 serverChange.addRedisInfo(home.toString());
                 serverChange.cache();
+                //Logger.info(serverChange.toString());
                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
                 serverChange.send();
             } else {

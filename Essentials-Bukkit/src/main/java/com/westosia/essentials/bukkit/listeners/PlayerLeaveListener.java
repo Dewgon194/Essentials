@@ -3,18 +3,14 @@ package com.westosia.essentials.bukkit.listeners;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
-import com.westosia.westosiaapi.utils.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 
 public class PlayerLeaveListener implements Listener {
 
-    //TODO: fix this sometimes saving on leave when it shouldnt. may happen when there is one home in memory and none in db?
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         // Tell Redis that this player is changing servers

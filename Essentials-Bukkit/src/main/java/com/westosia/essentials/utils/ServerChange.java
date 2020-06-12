@@ -95,29 +95,38 @@ public class ServerChange {
 
     @Override
     public String toString() {
-        StringBuilder infoString = new StringBuilder();
-        redisInfo.forEach((info) -> {
-            infoString.append("{")
-                    .append(info)
-                    .append("}");
-        });
-        String info = infoString.toString();
-        return uuid.toString() + "|" +
+        String serverChangeString = uuid.toString() + "|" +
                 reason.name() + "|" +
                 fromServer + "|" +
                 toServer + "|" +
-                isComplete + "|" +
-                info;
+                isComplete;
+        if (redisInfo.size() > 0) {
+            StringBuilder infoString = new StringBuilder();
+            redisInfo.forEach((info) -> {
+                infoString.append("{")
+                        .append(info)
+                        .append("}");
+            });
+            String info = infoString.toString();
+            serverChangeString = serverChangeString + "|" + info;
+        }
+        return serverChangeString;
     }
 
     public static ServerChange fromString(String serverChangeString) {
-        String[] split = serverChangeString.split("\\|");
+        // Split everything that is the server change string, but leave information whole
+        String[] split = serverChangeString.split("\\|", 6);
         ServerChange serverChange = new ServerChange(UUID.fromString(split[0]), Reason.valueOf(split[1]), split[2], split[3]);
         serverChange.setComplete(Boolean.parseBoolean(split[4]));
-        String infoStrings = split[5];
-        String[] infoSplit = infoStrings.split("[{}]+");
-        for (String info : infoSplit) {
-            serverChange.addRedisInfo(info);
+        if (split.length > 5) {
+            String infoStrings = split[5];
+            // Split up each section of information
+            String[] infoSplit = infoStrings.split("[{}]+");
+            for (String info : infoSplit) {
+                if (!info.isEmpty()) {
+                    serverChange.addRedisInfo(info);
+                }
+            }
         }
         return serverChange;
     }

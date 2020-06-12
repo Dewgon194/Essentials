@@ -12,9 +12,10 @@ public class ChangeServerListener implements RedisChannelListener {
 
     @Override
     public void messageReceived(String message) {
+        Logger.info("redis original message: " + message);
         ServerChange serverChange = ServerChange.fromString(message);
         serverChange.cache();
-        Logger.info(serverChange.toString());
+        Logger.info("parsed server change: " + serverChange.toString());
         if (Main.getInstance().isEnabled()) {
             // This is for a start server change
             if (ServerChange.isChangingServers(serverChange.getWhosChanging())) {
