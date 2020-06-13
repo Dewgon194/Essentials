@@ -9,20 +9,13 @@ import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.utils.RedisAnnouncer;
-import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
-import com.westosia.westosiaapi.utils.Logger;
-import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 
 @CommandAlias("sethome")
 @CommandPermission("essentials.command.sethome")
@@ -43,7 +36,6 @@ public class SetHomeCmd extends BaseCommand {
         if (size < getHomesAmount(player)) {
             Home home = new Home(player, homeName, Main.getInstance().serverName, player.getLocation());
             RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString());
-            //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Set home &f" + homeName + " &ato your location");
         } else {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You have reached the max amount of homes you can set");

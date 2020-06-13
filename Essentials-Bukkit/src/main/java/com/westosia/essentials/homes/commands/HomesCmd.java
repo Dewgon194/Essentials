@@ -38,8 +38,6 @@ public class HomesCmd extends BaseCommand {
                 UUID uuid = Bukkit.getPlayerUniqueId(args[0]);
                 if (uuid != null) {
                     Map<String, Home> homes;
-                    //TODO: find out why it'll report no homes even with the other player on
-                    // the player who owns the homes can even still see them!
                     if (!HomeManager.hasHomesLoaded(uuid)) {
                         // Load homes in
                         homes = loadHomes(uuid);
@@ -50,7 +48,7 @@ public class HomesCmd extends BaseCommand {
                     } else {
                         homes = HomeManager.getHomes(uuid);
                     }
-                    if (homes.size() > 1) {
+                    if (homes.size() > 0) {
                         String homeList = getHomesList(homes.keySet());
                         WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Found homes " + homeList);
                     } else {
@@ -84,12 +82,11 @@ public class HomesCmd extends BaseCommand {
         if (!unload.containsKey(uuid)) {
             int id = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
                 unload.remove(uuid);
-                DatabaseEditor.saveAllHomes(uuid);
-                Collection<Home> homes = new ArrayList<>(HomeManager.getHomes(uuid).values());
-                // Ask other servers to uncache homes
-                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, uuid.toString());
-                //homes.forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, home.toString()));
-                //homes.forEach((home) -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().DEL_HOME_REDIS_CHANNEL, home.toString()));
+                if (HomeManager.getHomes(uuid) != null) {
+                    DatabaseEditor.saveAllHomes(uuid);
+                    // Ask other servers to uncache homes
+                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, uuid.toString());
+                }
             }, 2400).getTaskId();
             unload.put(uuid, id);
         }
@@ -100,9 +97,12 @@ public class HomesCmd extends BaseCommand {
         FutureTask<Map<String, Home>> future = new FutureTask<>(() -> {
             // Get homes from database
             Map<String, Home> dbHomes = DatabaseEditor.getHomesInDB(uuid);
-            // Load them into Redis
-            dbHomes.values().forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString()));
-            //dbHomes.forEach(home -> RedisConnector.getInstance().getConnection().publish(Main.getInstance().SET_HOME_REDIS_CHANNEL, home.toString()));
+            if (dbHomes.size() > 0) {
+                // Load them into Redis
+                dbHomes.values().forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString()));
+            } else {
+                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, uuid.toString());
+            }
             return dbHomes;
         });
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
@@ -138,9 +138,14 @@ public class HomesCmd extends BaseCommand {
                 if (home != null) {
                     if (!home.getServerName().equals(Main.getInstance().serverName)) {
                         ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.HOME_TELEPORT, Main.getInstance().serverName, home.getServerName());
+                        serverChange.addRedisInfo(home.toString());
+                        serverChange.cache();
+                        RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
                         serverChange.send();
+                    } else {
+                        player.teleport(home.getLocation());
+                        WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Teleported to home &f" + home.getName());
                     }
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> HomeManager.sendHomeData(home, player), 2);
                 }
             } else {
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + "&cdoes not exist");
@@ -209,39 +214,6 @@ public class HomesCmd extends BaseCommand {
                 } else {
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "&f" + args[0] + " &cdoes not have a home &f" + homeName);
                 }
-                /*
-                // Load homes in if player is offline
-                if (!Bukkit.getOfflinePlayer(uuid).isOnline() && (homes == null || homes.isEmpty())) {
-                    Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-                        // Get homes from database
-                        Map<String, Home> dbHomes = DatabaseEditor.getHomesInDB(uuid);
-                        // Remove home
-                        if (dbHomes.containsKey(homeName)) {
-                            DatabaseEditor.deleteHome(dbHomes.get(homeName));
-                            dbHomes.remove(homeName);
-                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                                startUnloadTimer(uuid);
-                                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Home &f" + homeName + "&a removed");
-                            });
-                        } else {
-                            // Did not remove a home because it didn't exist
-                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "&f" + args[0] + " &cdoes not have a home &f" + homeName));
-                        }
-                        // Load them into Redis
-                        dbHomes.values().forEach(home -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString()));
-                    });
-                } else {
-                    Home home = homes.get(homeName);
-                    if (home != null) {
-                        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-                            DatabaseEditor.deleteHome(home);
-                            RedisConnector.getInstance().getConnection().publish(RedisAnnouncer.Channel.DEL_HOME.getChannel(), home.toString());
-                        });
-                        WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Home &f" + homeName + "&a removed");
-                    } else {
-                        WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "&f" + args[0] + " &cdoes not have a home &f" + homeName);
-                    }
-                }*/
             } else {
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + "&cdoes not exist");
             }

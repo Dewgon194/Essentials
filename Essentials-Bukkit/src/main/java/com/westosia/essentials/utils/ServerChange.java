@@ -3,12 +3,9 @@ package com.westosia.essentials.utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.Main;
-import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ServerChange {
 
@@ -16,6 +13,7 @@ public class ServerChange {
     private Reason reason;
     private String fromServer, toServer;
     private boolean isComplete;
+    private List<String> redisInfo;
 
     private static Map<UUID, ServerChange> serverChanges = new HashMap<>();
 
@@ -25,6 +23,7 @@ public class ServerChange {
         this.fromServer = fromServer;
         toServer = "";
         isComplete = false;
+        redisInfo = new ArrayList<>();
     }
 
     public ServerChange(UUID uuid, Reason reason, String fromServer, String toServer) {
@@ -33,6 +32,7 @@ public class ServerChange {
         this.fromServer = fromServer;
         this.toServer = toServer;
         isComplete = false;
+        redisInfo = new ArrayList<>();
     }
 
     public UUID getWhosChanging() {
@@ -61,9 +61,21 @@ public class ServerChange {
 
     public void setComplete(boolean complete) {
         isComplete = complete;
-        if (complete) {
-            serverChanges.remove(uuid);
+    }
+
+    public void addRedisInfo(String info) {
+        redisInfo.add(info);
+    }
+
+    public void removeRedisInfo(String info) {
+        redisInfo.remove(info);
+    }
+
+    public String readInfo() {
+        if (redisInfo.size() > 0) {
+            return redisInfo.remove(0);
         }
+        return null;
     }
 
     public void cache() {
@@ -83,19 +95,38 @@ public class ServerChange {
 
     @Override
     public String toString() {
-        return uuid.toString() + "|" +
+        String serverChangeString = uuid.toString() + "|" +
                 reason.name() + "|" +
                 fromServer + "|" +
                 toServer + "|" +
                 isComplete;
+        if (redisInfo.size() > 0) {
+            StringBuilder infoString = new StringBuilder();
+            redisInfo.forEach((info) -> {
+                infoString.append("{")
+                        .append(info)
+                        .append("}");
+            });
+            String info = infoString.toString();
+            serverChangeString = serverChangeString + "|" + info;
+        }
+        return serverChangeString;
     }
 
     public static ServerChange fromString(String serverChangeString) {
-        Logger.info(serverChangeString);
-        String[] split = serverChangeString.split("\\|");
-        ServerChange serverChange = new ServerChange(UUID.fromString(split[0]), Reason.valueOf(split[1]), split[2]);
-        if (split.length > 3 && !split[3].isEmpty()) {
-            serverChange.setToServer(split[3]);
+        // Split everything that is the server change string, but leave information whole
+        String[] split = serverChangeString.split("\\|", 6);
+        ServerChange serverChange = new ServerChange(UUID.fromString(split[0]), Reason.valueOf(split[1]), split[2], split[3]);
+        serverChange.setComplete(Boolean.parseBoolean(split[4]));
+        if (split.length > 5) {
+            String infoStrings = split[5];
+            // Split up each section of information
+            String[] infoSplit = infoStrings.split("[{}]+");
+            for (String info : infoSplit) {
+                if (!info.isEmpty()) {
+                    serverChange.addRedisInfo(info);
+                }
+            }
         }
         return serverChange;
     }
