@@ -20,6 +20,7 @@ import com.westosia.essentials.homes.commands.HomesCmd;
 import com.westosia.essentials.homes.commands.SetHomeCmd;
 import com.westosia.essentials.redis.ChangeServerListener;
 import com.westosia.essentials.redis.DelHomeListener;
+import com.westosia.essentials.redis.QueryHomesListener;
 import com.westosia.essentials.redis.SetHomeListener;
 import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.essentials.utils.RedisAnnouncer;
@@ -59,6 +60,7 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SET_HOME.getChannel(), new SetHomeListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.DEL_HOME.getChannel(), new DelHomeListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), new ChangeServerListener());
+        RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.QUERY_HOMES.getChannel(), new QueryHomesListener());
 
         registerEvents(
                 new PlayerLeaveListener(),
@@ -102,10 +104,8 @@ public class Main extends JavaPlugin {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
         service.execute(() -> cached.forEach((uuid) -> {
             DatabaseEditor.saveAllHomes(uuid);
-            //ServerChangeHelper.saveHomesToDB(uuid.toString());
             ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.SERVER_DOWN, serverName);
             RedisConnector.getInstance().getConnection().publish(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), serverChange.toString());
-            //ServerChangeInfo.tellRedis(uuid.toString(), "true", "db");
         }));
         service.shutdown();
     }

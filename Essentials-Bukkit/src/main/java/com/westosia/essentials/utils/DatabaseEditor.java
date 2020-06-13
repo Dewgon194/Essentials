@@ -4,7 +4,6 @@ import com.westosia.databaseapi.database.DatabaseConnector;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.westosiaapi.utils.Logger;
-import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -112,7 +111,6 @@ public class DatabaseEditor {
     public static void saveAllHomes(UUID uuid) {
         // Player has left; send Redis message for all servers to unload and save to database
         Map<String, Home> currentHomes = new HashMap<>(HomeManager.getHomes(uuid));
-        Logger.info("Saving to database " + currentHomes.keySet().size() + " homes for uuid " + uuid.toString());
         Map<String, Home> dbHomes = DatabaseEditor.getHomesInDB(uuid);
         // Get all homes from database that aren't in the current list. These need to be deleted
         dbHomes.forEach((dbHomeName, dbHome) -> {

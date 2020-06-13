@@ -53,15 +53,6 @@ public class Home {
                 LocationStrings.toString(getLocation());
     }
 
-    public byte[] toByteArray() {
-        ByteArrayDataOutput bytes = ByteStreams.newDataOutput();
-        bytes.writeUTF(owner.toString());
-        bytes.writeUTF(getName());
-        bytes.writeUTF(getServerName());
-        bytes.writeUTF(LocationStrings.toString(getLocation()));
-        return bytes.toByteArray();
-    }
-
     public void use() {
         Player player = getOwner().getPlayer();
         if (player != null) {

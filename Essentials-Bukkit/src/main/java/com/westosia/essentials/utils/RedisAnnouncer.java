@@ -11,7 +11,7 @@ public class RedisAnnouncer {
     }
 
     public enum Channel {
-        SET_HOME("sethome"), DEL_HOME("delhome"), CHANGE_SERVER("changeserver");
+        SET_HOME("sethome"), DEL_HOME("delhome"), CHANGE_SERVER("changeserver"), QUERY_HOMES("queryhomes");
         private final String channel;
 
         Channel(String channel) {
