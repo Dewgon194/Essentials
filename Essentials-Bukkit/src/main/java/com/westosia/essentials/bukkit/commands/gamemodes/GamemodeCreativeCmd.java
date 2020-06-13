@@ -30,7 +30,7 @@ public class GamemodeCreativeCmd extends BaseCommand {
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You are already in creative mode");
                 } else {
                     player.setGameMode(GameMode.CREATIVE);
-                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "GameMode changed to creative");
+                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Gamemode changed to creative");
                 }
             }
         } else if (player.hasPermission("essentials.command.gamemode.admin")) {
