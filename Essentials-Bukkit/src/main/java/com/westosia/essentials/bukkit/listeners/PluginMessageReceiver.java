@@ -3,6 +3,7 @@ package com.westosia.essentials.bukkit.listeners;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.Main;
+import com.westosia.westosiaapi.WestosiaAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -19,7 +20,9 @@ public class PluginMessageReceiver implements PluginMessageListener {
         if (subChannel.equalsIgnoreCase("EssentialsTP")) {
             String source = in.readUTF();
             String target = in.readUTF();
-            Bukkit.getPlayer(source).teleport(Bukkit.getPlayer(target)); // Ignore NPEs
+            if (Bukkit.getPlayer(source) != null && Bukkit.getPlayer(target) != null) {
+                Bukkit.getPlayer(source).teleport(Bukkit.getPlayer(target));
+            }
         } else if (subChannel.equalsIgnoreCase("GetServer")) {
             // Grab the server name from Bungee; only runs on server enable
             Main.getInstance().serverName = in.readUTF();

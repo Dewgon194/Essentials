@@ -1,7 +1,6 @@
 package com.westosia.essentials.bukkit;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.commands.*;
@@ -115,6 +114,7 @@ public class Main extends JavaPlugin {
         for (BaseCommand command : commands) {
             manager.registerCommand(command);
         }
+        manager.getCommandCompletions().registerCompletion("homes", context -> HomeManager.getHomes(context.getPlayer()).keySet());
     }
 
     private void registerEvents(Listener... listeners) {
