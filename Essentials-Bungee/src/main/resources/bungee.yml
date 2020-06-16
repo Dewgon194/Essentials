@@ -5,3 +5,6 @@ authors:
   - TheBirmanator
   - TheMGRF
 description: Essentials but only the essentials
+depends:
+  - LuckPerms
+  - PremiumVanish

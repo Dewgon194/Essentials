@@ -13,6 +13,8 @@ public class PlayerLeaveListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
+        event.setQuitMessage(null); // Suppress Bukkit leave message
+
         // Tell Redis that this player is changing servers
         // If they join another server, Redis will report back and remove their changing status
         // If they don't, Redis will hear nothing. Check back in 5 seconds, if Redis hasn't removed changing status,

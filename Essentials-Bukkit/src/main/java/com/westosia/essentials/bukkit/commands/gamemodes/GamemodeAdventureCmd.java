@@ -34,7 +34,7 @@ public class GamemodeAdventureCmd extends BaseCommand {
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You are already in adventure mode");
                 } else {
                     player.setGameMode(GameMode.ADVENTURE);
-                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "GameMode changed to adventure");
+                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Gamemode changed to adventure");
                 }
             }
         } else if (player.hasPermission("essentials.command.gamemode.admin")) {

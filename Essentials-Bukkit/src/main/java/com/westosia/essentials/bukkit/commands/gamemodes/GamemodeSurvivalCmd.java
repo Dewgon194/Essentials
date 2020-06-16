@@ -30,7 +30,7 @@ public class GamemodeSurvivalCmd extends BaseCommand {
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You are already in survival mode");
                 } else {
                     player.setGameMode(GameMode.SURVIVAL);
-                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "GameMode changed to survival");
+                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Gamemode changed to survival");
                 }
             }
         } else if (player.hasPermission("essentials.command.gamemode.admin")) {

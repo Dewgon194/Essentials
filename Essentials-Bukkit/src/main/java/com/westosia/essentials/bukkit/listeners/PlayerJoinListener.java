@@ -21,6 +21,8 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        event.setJoinMessage(null); // Suppress Bukkit join message
+
         // Get server name if it didn't get it on enable
         if (Main.getInstance().serverName.isEmpty()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> Main.getInstance().queryServerName());

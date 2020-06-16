@@ -5,6 +5,8 @@ import co.aikar.commands.BungeeCommandManager;
 import com.westosia.essentials.commands.*;
 import com.westosia.essentials.listeners.PlayerDisconnectListener;
 import com.westosia.essentials.listeners.PostLoginListener;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
@@ -13,8 +15,12 @@ public class Main extends Plugin {
 
     private static Main instance;
 
+    public static LuckPerms LUCK_PERMS;
+
     public void onEnable() {
         instance = this;
+
+        LUCK_PERMS = LuckPermsProvider.get();
 
         registerCommands(   new TeleportCmd(),
                             new TpaCmd(),

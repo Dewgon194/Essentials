@@ -30,7 +30,7 @@ public class GamemodeSpectatorCmd extends BaseCommand {
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You are already in spectator mode");
                 } else {
                     player.setGameMode(GameMode.SPECTATOR);
-                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "GameMode changed to spectator");
+                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Gamemode changed to spectator");
                 }
             }
         } else if (player.hasPermission("essentials.command.gamemode.admin")) {
