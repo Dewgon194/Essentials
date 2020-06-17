@@ -27,8 +27,8 @@ public class HomeCmd extends BaseCommand {
         }
         Home home = HomeManager.getHome(player, homeName);
         if (home != null) {
-            if (!home.getServerName().equalsIgnoreCase(Main.getInstance().serverName)) {
-                ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.HOME_TELEPORT, Main.getInstance().serverName, home.getServerName());
+            if (!home.getServerName().equalsIgnoreCase(Main.getInstance().SERVER_NAME)) {
+                ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.HOME_TELEPORT, Main.getInstance().SERVER_NAME, home.getServerName());
                 serverChange.addRedisInfo(home.toString());
                 serverChange.cache();
                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());

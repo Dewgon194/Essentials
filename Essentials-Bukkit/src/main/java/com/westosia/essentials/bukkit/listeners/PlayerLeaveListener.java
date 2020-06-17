@@ -21,7 +21,7 @@ public class PlayerLeaveListener implements Listener {
         // assume they are offline and uncache their homes
         UUID uuid = event.getPlayer().getUniqueId();
         if (!ServerChange.isChangingServers(uuid)) {
-            ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.VOLUNTARY, Main.getInstance().serverName);
+            ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.VOLUNTARY, Main.getInstance().SERVER_NAME);
             RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
         }
     }

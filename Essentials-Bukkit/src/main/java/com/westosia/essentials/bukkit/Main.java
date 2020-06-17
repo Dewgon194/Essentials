@@ -23,11 +23,13 @@ import com.westosia.essentials.redis.DelHomeListener;
 import com.westosia.essentials.redis.QueryHomesListener;
 import com.westosia.essentials.redis.SetHomeListener;
 import com.westosia.essentials.utils.DatabaseEditor;
+import com.westosia.essentials.utils.LocationStrings;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
 import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.utils.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -40,14 +42,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class Main extends JavaPlugin {
-    //public final String SET_HOME_REDIS_CHANNEL = "sethome";
-    //public final String DEL_HOME_REDIS_CHANNEL = "delhome";
-    //public final String CHANGE_SERVER_REDIS_CHANNEL = "changeserver";
-    public String serverName = "";
+    public Location FIRST_SPAWN_LOC;
+    public Location SPAWN_LOC;
+    public String SERVER_NAME = "";
     private static Main instance;
 
     public void onEnable() {
         instance = this;
+
+        saveDefaultConfig();
+        SPAWN_LOC = LocationStrings.fromConfig("spawn-location");
+        FIRST_SPAWN_LOC = LocationStrings.fromConfig("first-spawn");
         checkDB();
         checkNickDB();
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
@@ -86,7 +91,9 @@ public class Main extends JavaPlugin {
                 new FusCmd(),
                 new JumpCmd(),
                 new RepairCmd(),
-                new NickCmd()
+                new NickCmd(),
+                new SpawnCmd(),
+                new SetSpawnCmd()
         );
 
         // register bungee plugin channel
@@ -98,13 +105,16 @@ public class Main extends JavaPlugin {
     }
 
     public void onDisable() {
+        getConfig().set("spawn-location", LocationStrings.toString(SPAWN_LOC));
+        getConfig().set("first-spawn", LocationStrings.toString(FIRST_SPAWN_LOC));
+        saveConfig();
         // Save to database on disable
         Set<UUID> cached = HomeManager.getCachedHomeOwners();
 
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
         service.execute(() -> cached.forEach((uuid) -> {
             DatabaseEditor.saveAllHomes(uuid);
-            ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.SERVER_DOWN, serverName);
+            ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.SERVER_DOWN, SERVER_NAME);
             RedisConnector.getInstance().getConnection().publish(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), serverChange.toString());
         }));
         service.shutdown();
