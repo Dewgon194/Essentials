@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
+import com.westosia.westosiaapi.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,15 +23,15 @@ public class JoinKitCmd extends BaseCommand {
     public void joinKit(Player player) {
         ItemStack is = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta isMeta = (BookMeta) is.getItemMeta();
-        isMeta.addPage("Hi there, and welcome to the &6Westosia &0closed &ealpha&0!" +
-                "This is a very early version of our server, meaning you will most likely find &cbugs and glitches!" +
-                "&0We will have a form you can fill out to help us after the...");
-        isMeta.addPage("&ealpha&0, which will be a great area to give your feedback! :D" +
-                "You can start the RPG/SMP adventure by doing &a/quests&0. A &afriend&0 will help you out! ;)" +
-                "Enjoy!" +
-                "-&6Westosia Team");
-        isMeta.setTitle("Welcome to Alpha!");
-        isMeta.setAuthor("Westosia Team");
+        isMeta.addPage("Hi there, and welcome to the" + Text.colour("&6 Westosia")+ Text.colour("&6 alpha")+ Text.colour("&0!\n\n") +
+                "This is a very early version of our server, meaning you will most likely find"+Text.colour("&c bugs and glitches")+Text.colour("&0!\n\n") +
+                Text.colour("&0We will have a form you can fill out to help us after the..."));
+        isMeta.addPage(Text.colour("&6alpha")+ Text.colour("&0, which will be a great area to give your feedback! :D\n\n") +
+                "You can start the RPG/SMP adventure by doing "+ Text.colour("&a/quests")+ Text.colour("&0. A ")+ Text.colour("&afriend")+ Text.colour("&0 will help you out! ;)\n\n") +
+                "Enjoy!\n" +
+                "-"+Text.colour("&6Westosia Team"));
+        isMeta.setTitle("Welcome to "+Text.colour("&6Alpha") + Text.colour("&f!"));
+        isMeta.setAuthor(Text.colour("&6&lWestosia Team"));
         is.setItemMeta(isMeta);
         player.getInventory().addItem(is);
     }
