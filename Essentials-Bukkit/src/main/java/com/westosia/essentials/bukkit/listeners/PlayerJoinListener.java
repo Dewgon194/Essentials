@@ -10,9 +10,12 @@ import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -99,6 +102,19 @@ public class PlayerJoinListener implements Listener {
         //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
         if (!DatabaseEditor.getNick(uuid).equals("")) {
             event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
+        }
+        if(!event.getPlayer().hasPlayedBefore()){
+            ItemStack is = new ItemStack(Material.WRITTEN_BOOK);
+            BookMeta isMeta = (BookMeta) is.getItemMeta();
+            isMeta.addPage("Hi there, and welcome to the &6Westosia &0closed &ealpha&0!" +
+                    "This is a very early version of our server, meaning you will most likely find &cbugs and glitches!" +
+                    "&0We will have a form you can fill out to help us after the...");
+            isMeta.addPage("&ealpha&0, which will be a great area to give your feedback! :D" +
+                    "You can start the RPG/SMP adventure by doing &a/quests&0. A &afriend&0 will help you out! ;)" +
+                    "Enjoy!" +
+                    "-&6Westosia Team");
+            is.setItemMeta(isMeta);
+            event.getPlayer().getInventory().addItem(is);
         }
     }
 }
