@@ -86,7 +86,8 @@ public class Main extends JavaPlugin {
                 new FusCmd(),
                 new JumpCmd(),
                 new RepairCmd(),
-                new NickCmd()
+                new NickCmd(),
+                new JoinKitCmd()
         );
 
         // register bungee plugin channel

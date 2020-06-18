@@ -29,6 +29,8 @@ public class JoinKitCmd extends BaseCommand {
                 "You can start the RPG/SMP adventure by doing &a/quests&0. A &afriend&0 will help you out! ;)" +
                 "Enjoy!" +
                 "-&6Westosia Team");
+        isMeta.setTitle("Welcome to Alpha!");
+        isMeta.setAuthor("Westosia Team");
         is.setItemMeta(isMeta);
         player.getInventory().addItem(is);
     }
