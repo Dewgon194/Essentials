@@ -26,6 +26,12 @@
     </repositories>
 
     <dependencies>
+        <!-- MPDB -->
+        <dependency>
+            <groupId>net.craftersland.data</groupId>
+            <artifactId>bridge</artifactId>
+            <version>3.33.3</version>
+        </dependency>
         <!-- PaperMC -->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>

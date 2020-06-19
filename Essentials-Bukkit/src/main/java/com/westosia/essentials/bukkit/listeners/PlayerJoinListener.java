@@ -10,6 +10,7 @@ import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import com.westosia.westosiaapi.utils.Logger;
 import com.westosia.westosiaapi.utils.Text;
+import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -71,7 +72,7 @@ public class PlayerJoinListener implements Listener {
                 } else {
                     // Just joined the server, load homes
                     if (HomeManager.getHomes(event.getPlayer()) == null) {
-                        Logger.info(uuid.toString()  + " needs homes loaded");
+                        Logger.info(uuid.toString() + " needs homes loaded");
                         // Tell each server to load this player's homes via Redis
                         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
                             // Get homes from database
@@ -104,20 +105,23 @@ public class PlayerJoinListener implements Listener {
         if (!DatabaseEditor.getNick(uuid).equals("")) {
             event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
         }
-        if(!event.getPlayer().hasPlayedBefore()){
-            ItemStack is = new ItemStack(Material.WRITTEN_BOOK);
-            BookMeta isMeta = (BookMeta) is.getItemMeta();
-            isMeta.addPage("Hi there, and welcome to the" + Text.colour("&6 Westosia")+ Text.colour("&6 alpha")+ Text.colour("&0!\n\n") +
-                    "This is a very early version of our server, meaning you will most likely find"+Text.colour("&c bugs and glitches")+"!\n\n" +
-                    Text.colour("&0We will have a form you can fill out to help us after the..."));
-            isMeta.addPage(Text.colour("&6alpha")+ Text.colour("&0, which will be a great area to give your feedback! :D\n\n") +
-                    "You can start the RPG/SMP adventure by doing "+ Text.colour("&a/quests")+ Text.colour("&0. A ")+ Text.colour("&afriend")+ Text.colour("&0 will help you out! ;)\n\n") +
-                    "Enjoy!\n" +
-                    "-"+Text.colour("&6Westosia Team"));
-            isMeta.setTitle("Welcome to "+Text.colour("&6Alpha") + "!");
-            isMeta.setAuthor(Text.colour("&6&lWestosia Team"));
-            is.setItemMeta(isMeta);
-            event.getPlayer().getInventory().addItem(is);
-        }
+
+    }
+
+    @EventHandler
+    public void onInvLoad(SyncCompleteEvent e) {
+        ItemStack is = new ItemStack(Material.WRITTEN_BOOK);
+        BookMeta isMeta = (BookMeta) is.getItemMeta();
+        isMeta.addPage("Hi there, and welcome to the" + Text.colour("&6 Westosia") + Text.colour("&6 alpha") + Text.colour("&0!\n\n") +
+                "This is a very early version of our server, meaning you will most likely find" + Text.colour("&c bugs and glitches") + "!\n\n" +
+                Text.colour("&0We will have a form you can fill out to help us after the..."));
+        isMeta.addPage(Text.colour("&6alpha") + Text.colour("&0, which will be a great area to give your feedback! :D\n\n") +
+                "You can start the RPG/SMP adventure by doing " + Text.colour("&a/quests") + Text.colour("&0. A ") + Text.colour("&afriend") + Text.colour("&0 will help you out! ;)\n\n") +
+                "Enjoy!\n" +
+                "-" + Text.colour("&6Westosia Team"));
+        isMeta.setTitle("Welcome to " + Text.colour("&6Alpha") + "!");
+        isMeta.setAuthor(Text.colour("&6&lWestosia Team"));
+        is.setItemMeta(isMeta);
+        e.getPlayer().getInventory().addItem(is);
     }
 }
