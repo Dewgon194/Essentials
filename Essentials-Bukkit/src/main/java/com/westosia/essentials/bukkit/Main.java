@@ -93,7 +93,8 @@ public class Main extends JavaPlugin {
                 new RepairCmd(),
                 new NickCmd(),
                 new SpawnCmd(),
-                new SetSpawnCmd()
+                new SetSpawnCmd(),
+                new JoinKitCmd()
         );
 
         // register bungee plugin channel

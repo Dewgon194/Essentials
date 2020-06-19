@@ -9,11 +9,15 @@ import com.westosia.essentials.utils.ServerChange;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import com.westosia.westosiaapi.utils.Logger;
+import com.westosia.westosiaapi.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -93,6 +97,21 @@ public class PlayerJoinListener implements Listener {
         }, 10);
         if (!DatabaseEditor.getNick(uuid).equals("")) {
             player.setDisplayName(DatabaseEditor.getNick(uuid));
+        }
+        if(!event.getPlayer().hasPlayedBefore()){
+            ItemStack is = new ItemStack(Material.WRITTEN_BOOK);
+            BookMeta isMeta = (BookMeta) is.getItemMeta();
+            isMeta.addPage("Hi there, and welcome to the" + Text.colour("&6 Westosia")+ Text.colour("&6 alpha")+ Text.colour("&0!\n\n") +
+                    "This is a very early version of our server, meaning you will most likely find"+Text.colour("&c bugs and glitches")+"!\n\n" +
+                    Text.colour("&0We will have a form you can fill out to help us after the..."));
+            isMeta.addPage(Text.colour("&6alpha")+ Text.colour("&0, which will be a great area to give your feedback! :D\n\n") +
+                    "You can start the RPG/SMP adventure by doing "+ Text.colour("&a/quests")+ Text.colour("&0. A ")+ Text.colour("&afriend")+ Text.colour("&0 will help you out! ;)\n\n") +
+                    "Enjoy!\n" +
+                    "-"+Text.colour("&6Westosia Team"));
+            isMeta.setTitle("Welcome to "+Text.colour("&6Alpha") + "!");
+            isMeta.setAuthor(Text.colour("&6&lWestosia Team"));
+            is.setItemMeta(isMeta);
+            event.getPlayer().getInventory().addItem(is);
         }
     }
 }
