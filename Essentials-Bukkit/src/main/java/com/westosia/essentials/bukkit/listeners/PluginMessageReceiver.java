@@ -22,7 +22,7 @@ public class PluginMessageReceiver implements PluginMessageListener {
             Bukkit.getPlayer(source).teleport(Bukkit.getPlayer(target)); // Ignore NPEs
         } else if (subChannel.equalsIgnoreCase("GetServer")) {
             // Grab the server name from Bungee; only runs on server enable
-            Main.getInstance().serverName = in.readUTF();
+            Main.getInstance().SERVER_NAME = in.readUTF();
         }
     }
 }

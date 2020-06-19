@@ -136,8 +136,8 @@ public class HomesCmd extends BaseCommand {
                 }
                 Home home = HomeManager.getHomes(uuid).get(homeName);
                 if (home != null) {
-                    if (!home.getServerName().equals(Main.getInstance().serverName)) {
-                        ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.HOME_TELEPORT, Main.getInstance().serverName, home.getServerName());
+                    if (!home.getServerName().equals(Main.getInstance().SERVER_NAME)) {
+                        ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.HOME_TELEPORT, Main.getInstance().SERVER_NAME, home.getServerName());
                         serverChange.addRedisInfo(home.toString());
                         serverChange.cache();
                         RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
@@ -173,7 +173,7 @@ public class HomesCmd extends BaseCommand {
                         return;
                     }
                 }
-                Home home = new Home(uuid, homeName, Main.getInstance().serverName, player.getLocation());
+                Home home = new Home(uuid, homeName, Main.getInstance().SERVER_NAME, player.getLocation());
                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString());
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Set home &f" + homeName + " &ato your location");
             } else {

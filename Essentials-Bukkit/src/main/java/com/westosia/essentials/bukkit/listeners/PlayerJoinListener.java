@@ -12,6 +12,7 @@ import com.westosia.westosiaapi.utils.Logger;
 import com.westosia.westosiaapi.utils.Text;
 import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,12 +29,20 @@ public class PlayerJoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null); // Suppress Bukkit join message
 
+        Player player = event.getPlayer();
+        // If a newbie, send them to first spawn point
+        if (!player.hasPlayedBefore()) {
+            player.teleport(Main.getInstance().FIRST_SPAWN_LOC);
+        } else {
+            player.teleport(Main.getInstance().SPAWN_LOC);
+        }
+
         // Get server name if it didn't get it on enable
-        if (Main.getInstance().serverName.isEmpty()) {
+        if (Main.getInstance().SERVER_NAME.isEmpty()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> Main.getInstance().queryServerName());
         }
 
-        UUID uuid = event.getPlayer().getUniqueId();
+        UUID uuid = player.getUniqueId();
         // Wait a moment because this event fires before the Redis event from leaving
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
             @Override
@@ -43,13 +52,13 @@ public class PlayerJoinListener implements Listener {
                 if (ServerChange.isChangingServers(uuid)) {
                     ServerChange serverChange = ServerChange.getServerChange(uuid);
                     if (serverChange.getToServer().isEmpty()) {
-                        serverChange.setToServer(Main.getInstance().serverName);
+                        serverChange.setToServer(Main.getInstance().SERVER_NAME);
                     }
                     serverChange.setComplete(true);
                     RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
                     // If player has no homes here, the server restarted. Get them from the server they were just on
                     // (Or, if they came here because their previous server shut down, check the database)
-                    if (HomeManager.getHomes(event.getPlayer()) == null) {
+                    if (HomeManager.getHomes(player) == null) {
                         // Joined because server went down, load from database
                         if (serverChange.getReason() == ServerChange.Reason.SERVER_DOWN) {
                             Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
@@ -66,13 +75,13 @@ public class PlayerJoinListener implements Listener {
                     if (serverChange.getReason() == ServerChange.Reason.HOME_TELEPORT) {
                         String homeString = serverChange.readInfo();
                         Home home = HomeManager.fromString(homeString);
-                        event.getPlayer().teleport(home.getLocation());
-                        WestosiaAPI.getNotifier().sendChatMessage(event.getPlayer(), Notifier.NotifyStatus.SUCCESS, "Teleported to home &f" + home.getName());
+                        player.teleport(home.getLocation());
+                        WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Teleported to home &f" + home.getName());
                     }
                 } else {
                     // Just joined the server, load homes
-                    if (HomeManager.getHomes(event.getPlayer()) == null) {
-                        Logger.info(uuid.toString() + " needs homes loaded");
+                    if (HomeManager.getHomes(player) == null) {
+                        Logger.info(uuid.toString()  + " needs homes loaded");
                         // Tell each server to load this player's homes via Redis
                         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
                             // Get homes from database
@@ -87,23 +96,8 @@ public class PlayerJoinListener implements Listener {
                 }
             }
         }, 10);
-        // Tell Redis that this player joined a server, so that they don't get marked as logged off the network
-        // and their homes uncached
-        /*
-        UUID uuid = event.getPlayer().getUniqueId();
-        if (ServerChange.isChangingServers(uuid)) {
-            Logger.info("changing servers");
-            ServerChange serverChange = ServerChange.getServerChange(uuid);
-            if (serverChange.getToServer().isEmpty()) {
-                Logger.info("declaring target server");
-                serverChange.setToServer(Main.getInstance().serverName);
-            }
-            serverChange.setComplete(true);
-            RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
-        }*/
-        //Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set("homes." + uuid.toString() + ".changing-servers", "false"));
         if (!DatabaseEditor.getNick(uuid).equals("")) {
-            event.getPlayer().setDisplayName(DatabaseEditor.getNick(uuid));
+            player.setDisplayName(DatabaseEditor.getNick(uuid));
         }
 
     }

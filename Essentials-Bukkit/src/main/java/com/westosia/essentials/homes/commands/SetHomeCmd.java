@@ -34,7 +34,7 @@ public class SetHomeCmd extends BaseCommand {
             size = homes.size();
         }
         if (size < getHomesAmount(player)) {
-            Home home = new Home(player, homeName, Main.getInstance().serverName, player.getLocation());
+            Home home = new Home(player, homeName, Main.getInstance().SERVER_NAME, player.getLocation());
             RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString());
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Set home &f" + homeName + " &ato your location");
         } else {
