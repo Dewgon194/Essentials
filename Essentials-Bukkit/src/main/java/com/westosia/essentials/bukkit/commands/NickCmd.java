@@ -2,6 +2,7 @@ package com.westosia.essentials.bukkit.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.westosia.essentials.utils.DatabaseEditor;
@@ -11,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @CommandAlias("nick")
-/*@CommandPermission("essentials.command.nick")*/
+@CommandPermission("essentials.command.nick")
 public class NickCmd extends BaseCommand {
 
     @Default
