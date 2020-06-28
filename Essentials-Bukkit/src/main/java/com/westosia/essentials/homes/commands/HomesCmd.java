@@ -12,6 +12,7 @@ import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -41,7 +42,7 @@ public class HomesCmd extends BaseCommand {
                     if (!HomeManager.hasHomesLoaded(uuid)) {
                         // Load homes in
                         homes = loadHomes(uuid);
-                        if (homes == null) {
+                        if (homes == null || homes.isEmpty()) {
                             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Could not retrieve homes for &f" + args[0]);
                             return;
                         }
@@ -55,7 +56,7 @@ public class HomesCmd extends BaseCommand {
                         WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "This player has no set homes");
                     }
                 } else {
-                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + "&cdoes not exist");
+                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + " &cdoes not exist");
                 }
             } else {
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "You don't have permission to run that command");
@@ -129,7 +130,7 @@ public class HomesCmd extends BaseCommand {
                 if (!HomeManager.hasHomesLoaded(uuid)) {
                     // Load homes in
                     homes = loadHomes(uuid);
-                    if (homes == null) {
+                    if (homes == null || homes.isEmpty()) {
                         WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Could not retrieve homes for &f" + args[0]);
                         return;
                     }
@@ -148,7 +149,7 @@ public class HomesCmd extends BaseCommand {
                     }
                 }
             } else {
-                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + "&cdoes not exist");
+                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + " &cdoes not exist");
             }
         } else {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Not enough arguments! Make sure you supply a player and a home name");
@@ -168,7 +169,7 @@ public class HomesCmd extends BaseCommand {
                 if (!HomeManager.hasHomesLoaded(uuid)) {
                     // Load homes in
                     homes = loadHomes(uuid);
-                    if (homes == null) {
+                    if (homes == null || homes.isEmpty()) {
                         WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Could not retrieve homes for &f" + args[0]);
                         return;
                     }
@@ -177,7 +178,7 @@ public class HomesCmd extends BaseCommand {
                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, home.toString());
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Set home &f" + homeName + " &ato your location");
             } else {
-                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + "&cdoes not exist");
+                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + " &cdoes not exist");
             }
         } else {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Not enough arguments! Make sure you supply a player and a home name");
@@ -197,7 +198,7 @@ public class HomesCmd extends BaseCommand {
                 if (!HomeManager.hasHomesLoaded(uuid)) {
                     // Load homes in
                     homes = loadHomes(uuid);
-                    if (homes == null) {
+                    if (homes == null || homes.isEmpty()) {
                         WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Could not retrieve homes for &f" + args[0]);
                         return;
                     }
@@ -210,12 +211,12 @@ public class HomesCmd extends BaseCommand {
                         DatabaseEditor.deleteHome(home);
                         RedisConnector.getInstance().getConnection().publish(RedisAnnouncer.Channel.DEL_HOME.getChannel(), home.toString());
                     });
-                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Home &f" + homeName + "&a removed");
+                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Home &f" + homeName + " &a removed");
                 } else {
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "&f" + args[0] + " &cdoes not have a home &f" + homeName);
                 }
             } else {
-                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + "&cdoes not exist");
+                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "The player &f" + args[0] + " &cdoes not exist");
             }
         } else {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Not enough arguments! Make sure you supply a player and a home name");
