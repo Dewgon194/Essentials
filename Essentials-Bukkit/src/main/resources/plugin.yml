@@ -5,9 +5,10 @@ authors:
   - TheBirmanator
   - TheMGRF
   - JamieCee
+  - Dewgon
 api-version: 1.15
 description: Essentials but only the essentials
-depend: [RedisAPI, DatabaseAPI, WestosiaAPI, ACFLoader]
+depend: [RedisAPI, DatabaseAPI, WestosiaAPI, ACFLoader, MysqlPlayerDataBridge]
 permissions:
   essentials.*:
     description: Gives access to all Essentials commands and permisions

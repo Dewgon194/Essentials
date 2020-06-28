@@ -1,5 +1,6 @@
 package com.westosia.essentials.utils;
 
+import com.westosia.essentials.bukkit.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -30,6 +31,15 @@ public class LocationStrings {
         location.setYaw((float) round(location.getYaw()));
         location.setPitch((float) round(location.getPitch()));
         return location;
+    }
+
+    public static Location fromConfig(String directory) {
+        String locString = Main.getInstance().getConfig().getString(directory);
+        if (locString == null) {
+            return new Location(Bukkit.getWorlds().get(0), 0, 64, 0);
+        } else {
+            return toLoc(locString);
+        }
     }
 
     private static double round(double number) {

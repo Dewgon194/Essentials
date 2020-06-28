@@ -25,7 +25,7 @@ public class PluginMessageReceiver implements PluginMessageListener {
             }
         } else if (subChannel.equalsIgnoreCase("GetServer")) {
             // Grab the server name from Bungee; only runs on server enable
-            Main.getInstance().serverName = in.readUTF();
+            Main.getInstance().SERVER_NAME = in.readUTF();
         }
     }
 }

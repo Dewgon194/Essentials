@@ -30,12 +30,12 @@ public class ChangeServerListener implements RedisChannelListener {
                     // (And make sure to notify everyone else!)
                     if (serverChange.getReason() == ServerChange.Reason.SERVER_DOWN) {
                         if (Bukkit.getPlayer(serverChange.getWhosChanging()) != null) {
-                            serverChange.setToServer(Main.getInstance().serverName);
+                            serverChange.setToServer(Main.getInstance().SERVER_NAME);
                             serverChange.setComplete(true);
                             Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().publish(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), serverChange.toString()), 2);
                         }
                     }
-                    if (serverChange.getFromServer().equalsIgnoreCase(Main.getInstance().serverName)) {
+                    if (serverChange.getFromServer().equalsIgnoreCase(Main.getInstance().SERVER_NAME)) {
                         // Start a timer for 5 seconds, if the ServerChange hasn't updated, they are offline
                         Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
                             // Player has not connected to another server in 5 seconds, assume them offline

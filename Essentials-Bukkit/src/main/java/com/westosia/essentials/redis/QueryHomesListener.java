@@ -15,7 +15,7 @@ public class QueryHomesListener implements RedisChannelListener {
     public void messageReceived(String message) {
         String[] split = message.split("\\|");
         String server = split[0];
-        if (Main.getInstance().serverName.equals(server)) {
+        if (Main.getInstance().SERVER_NAME.equals(server)) {
             // Load homes based on this server's cached homes
             UUID uuid = UUID.fromString(split[1]);
             Collection<Home> homes = HomeManager.getHomes(uuid).values();

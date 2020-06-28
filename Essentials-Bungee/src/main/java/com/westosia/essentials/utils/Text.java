@@ -22,7 +22,10 @@ public class Text {
         User user = lp.getUserManager().getUser(player.getUniqueId());
         ContextManager cm = lp.getContextManager();
         CachedMetaData metaData = user.getCachedData().getMetaData(cm.getQueryOptions(user).orElse(cm.getStaticQueryOptions()));
-
-        return metaData.getPrefix();
+        String prefix = metaData.getPrefix();
+        if (prefix == null) {
+            prefix = "&f";
+        }
+        return prefix;
     }
 }
