@@ -1,7 +1,5 @@
-package com.westosia.essentials.utils;
+package com.westosia.essentials.utils.teleports;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.westosia.essentials.Main;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -12,53 +10,30 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class TeleportRequest {
+public class TeleportRequest extends Teleport {
     // Maps the receiver of a teleport request to the teleport request
     private static Map<ProxiedPlayer, TeleportRequest> requests = new HashMap<>();
 
-    private ProxiedPlayer sender, receiver, target;
+    private ProxiedPlayer sender;
     private int timerID = -1;
 
-    public TeleportRequest(ProxiedPlayer sender, ProxiedPlayer receiver, ProxiedPlayer target) {
+    public TeleportRequest(ProxiedPlayer sender, ProxiedPlayer whosTPing, TeleportTarget<?> target) {
+        super(whosTPing, target);
         this.sender = sender;
-        this.receiver = receiver;
-        this.target = target;
         startExpirationTimer();
 
-        requests.put(receiver, this);
+        //requests.put(receiver, this);
     }
-
-    public ProxiedPlayer getReceiver() {
-        return receiver;
-    }
-
     public ProxiedPlayer getSender() {
         return sender;
-    }
-
-    public ProxiedPlayer getTarget() {
-        return target;
     }
 
     public void use(boolean accepted) {
         stopExpirationTimer();
         if (accepted) {
-            int waitTime = 0;
-            if (changedServers()) {
-                waitTime = 100;
-            }
-            ProxyServer.getInstance().getScheduler().schedule(Main.getInstance(), this::notifyBukkit, waitTime, TimeUnit.MILLISECONDS);
+            super.use();
         }
-        requests.remove(getReceiver());
-    }
-
-    private boolean changedServers() {
-        boolean changedServers = false;
-        if (getWhoTeleports().getServer().getInfo() != getTarget().getServer().getInfo()) {
-            changedServers = true;
-            getWhoTeleports().connect(getTarget().getServer().getInfo());
-        }
-        return changedServers;
+        //requests.remove(getReceiver());
     }
 
     public ProxiedPlayer getWhoTeleports() {
@@ -67,15 +42,6 @@ public class TeleportRequest {
             teleporting = getSender();
         }
         return teleporting;
-    }
-
-    private void notifyBukkit() {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("EssentialsTP");
-        out.writeUTF(getWhoTeleports().getName());
-        out.writeUTF(getTarget().getName());
-
-        getTarget().getServer().getInfo().sendData("BungeeCord", out.toByteArray());
     }
 
     public static TeleportRequest getActiveTeleportRequest(ProxiedPlayer receiver) {

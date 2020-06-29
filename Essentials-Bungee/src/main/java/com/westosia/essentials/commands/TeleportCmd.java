@@ -2,7 +2,7 @@ package com.westosia.essentials.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import com.westosia.essentials.utils.TeleportRequest;
+import com.westosia.essentials.utils.teleports.TeleportRequest;
 import com.westosia.essentials.utils.Text;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

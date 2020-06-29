@@ -27,7 +27,8 @@ public class Main extends Plugin {
                             new TpaHereCmd(),
                             new TpAcceptCmd(),
                             new TpDenyCmd(),
-                            new TpCancelCmd());
+                            new TpCancelCmd(),
+                            new TpHereCmd());
 
         registerListeners(  new PostLoginListener(),
                             new PlayerDisconnectListener());

@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
-import com.westosia.essentials.utils.TeleportRequest;
+import com.westosia.essentials.utils.teleports.TeleportRequest;
 import com.westosia.essentials.utils.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
