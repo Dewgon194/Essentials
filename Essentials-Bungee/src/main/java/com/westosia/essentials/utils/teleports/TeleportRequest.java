@@ -17,13 +17,14 @@ public class TeleportRequest extends Teleport {
     private ProxiedPlayer sender;
     private int timerID = -1;
 
-    public TeleportRequest(ProxiedPlayer sender, ProxiedPlayer whosTPing, TeleportTarget<?> target) {
+    public TeleportRequest(ProxiedPlayer sender, ProxiedPlayer whosTPing, TeleportTarget<ProxiedPlayer> target) {
         super(whosTPing, target);
         this.sender = sender;
         startExpirationTimer();
 
-        //requests.put(receiver, this);
+        requests.put(getReceiver(), this);
     }
+
     public ProxiedPlayer getSender() {
         return sender;
     }
@@ -33,15 +34,15 @@ public class TeleportRequest extends Teleport {
         if (accepted) {
             super.use();
         }
-        //requests.remove(getReceiver());
+        requests.remove(getReceiver());
     }
 
-    public ProxiedPlayer getWhoTeleports() {
-        ProxiedPlayer teleporting = getReceiver();
-        if (teleporting.equals(getTarget())) {
-            teleporting = getSender();
+    public ProxiedPlayer getReceiver() {
+        ProxiedPlayer receiver = getWhosTPing();
+        if (receiver.equals(getSender())) {
+            receiver = (ProxiedPlayer) getTarget().getType();
         }
-        return teleporting;
+        return receiver;
     }
 
     public static TeleportRequest getActiveTeleportRequest(ProxiedPlayer receiver) {

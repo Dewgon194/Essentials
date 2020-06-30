@@ -2,8 +2,10 @@ package com.westosia.essentials.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import com.westosia.essentials.utils.teleports.Teleport;
 import com.westosia.essentials.utils.teleports.TeleportRequest;
 import com.westosia.essentials.utils.Text;
+import com.westosia.essentials.utils.teleports.TeleportTarget;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -18,7 +20,10 @@ public class TeleportCmd extends BaseCommand {
         if (args.length == 1) {
             ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
             if (target != null) {
-                new TeleportRequest(player, target, target).use(true);
+                TeleportTarget<ProxiedPlayer> goingTo = new TeleportTarget<>();
+                goingTo.setType(target);
+                new Teleport(player, goingTo).use();
+                //new TeleportRequest(player, target, target).use(true);
                 announceTP(player.getName(), target.getName(), "");
             } else {
                 player.sendMessage(Text.format("&cCould not find player: " + args[0]));
@@ -28,7 +33,10 @@ public class TeleportCmd extends BaseCommand {
             if (source != null) {
                 ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[1]);
                 if (target != null) {
-                    new TeleportRequest(source, target, target).use(true);
+                    TeleportTarget<ProxiedPlayer> goingTo = new TeleportTarget<>();
+                    goingTo.setType(target);
+                    new Teleport(source, goingTo).use();
+                    //new TeleportRequest(source, target, target).use(true);
                     announceTP(source.getName(), target.getName(), player.getName());
                 } else {
                     player.sendMessage(Text.format("&cCould not find player: " + args[1]));

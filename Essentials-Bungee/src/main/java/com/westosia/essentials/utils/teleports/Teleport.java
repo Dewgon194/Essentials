@@ -29,7 +29,7 @@ public class Teleport {
     public void use() {
         int waitTime = 0;
         if (changedServers()) {
-            waitTime = 100;
+            waitTime = 200;
         }
         ProxyServer.getInstance().getScheduler().schedule(Main.getInstance(), this::notifyBukkit, waitTime, TimeUnit.MILLISECONDS);
     }

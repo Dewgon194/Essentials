@@ -20,7 +20,7 @@ public class TeleportTarget<T> {
         if (getType() instanceof ProxiedPlayer) {
             return ((ProxiedPlayer) getType()).getServer().getInfo();
         } else {
-            return ProxyServer.getInstance().getServerInfo("westosia");
+            return ProxyServer.getInstance().getServerInfo(((Location) getType()).getServer());
         }
     }
 

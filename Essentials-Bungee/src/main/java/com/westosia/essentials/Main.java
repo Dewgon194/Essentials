@@ -7,6 +7,7 @@ import com.westosia.essentials.listeners.PlayerDisconnectListener;
 import com.westosia.essentials.listeners.PostLoginListener;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
@@ -28,7 +29,8 @@ public class Main extends Plugin {
                             new TpAcceptCmd(),
                             new TpDenyCmd(),
                             new TpCancelCmd(),
-                            new TpHereCmd());
+                            new TpHereCmd(),
+                            new TpposCmd());
 
         registerListeners(  new PostLoginListener(),
                             new PlayerDisconnectListener());
@@ -39,6 +41,7 @@ public class Main extends Plugin {
         for (BaseCommand command : commands) {
             manager.registerCommand(command);
         }
+        manager.getCommandCompletions().registerCompletion("servers", context -> ProxyServer.getInstance().getServers().keySet());
     }
 
     private void registerListeners(Listener... listeners) {

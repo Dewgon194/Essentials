@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.westosia.essentials.utils.teleports.TeleportRequest;
 import com.westosia.essentials.utils.Text;
+import com.westosia.essentials.utils.teleports.TeleportTarget;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -23,7 +24,10 @@ public class TpaHereCmd extends BaseCommand {
                     if (currentRequest != null && currentRequest.getSender().equals(player)) {
                         player.sendMessage(Text.format("&4&l(!) &cYou've already sent &f" + playerSendTo.getName() + "&c a request. Please wait a moment before sending them another"));
                     } else {
-                        new TeleportRequest(player, playerSendTo, player);
+                        TeleportTarget<ProxiedPlayer> goingTo = new TeleportTarget<>();
+                        goingTo.setType(player);
+                        new TeleportRequest(player, playerSendTo, goingTo);
+                        //new TeleportRequest(player, playerSendTo, player);
                         player.sendMessage(Text.format("&3&l(!) &bSent a request for &f" + playerSendTo.getName() + " &bto teleport to you"));
                         playerSendTo.sendMessage(Text.format("&3&l(!) &f" + player.getName() + " &bhas requested that you teleport to them"));
                     }
