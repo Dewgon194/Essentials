@@ -47,6 +47,7 @@ public class ChangeServerListener implements RedisChannelListener {
                                 }
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, serverChange.getWhosChanging().toString());
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());
+                                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, serverChange.getWhosChanging().toString());
                             }
                         }, 100);
                     }

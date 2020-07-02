@@ -3,6 +3,7 @@ package com.westosia.essentials.bukkit.listeners;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.homes.back.BackManager;
 import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public class PlayerJoinListener implements Listener {
@@ -64,6 +66,12 @@ public class PlayerJoinListener implements Listener {
                             Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
                                 Collection<Home> dbHomes = DatabaseEditor.getHomesInDB(uuid).values();
                                 dbHomes.forEach(HomeManager::cacheHome);
+
+                                // Get backhomes from Redis variable
+                                List<Home> backHomes = BackManager.getBackHomesFromRedis(uuid);
+                                if (backHomes.size() > 0) {
+                                    backHomes.forEach(BackManager::cacheBackHome);
+                                }
                             });
                         } else {
                             // Joined for any other reason. Check previous server for homes
@@ -80,6 +88,8 @@ public class PlayerJoinListener implements Listener {
                     }
                 } else {
                     // Just joined the server, load homes
+                    //TODO: change this to not be sync (and perms)
+                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, BackManager.createBackHome(uuid, player.getLocation()).toString());
                     if (HomeManager.getHomes(player) == null) {
                         Logger.info(uuid.toString()  + " needs homes loaded");
                         // Tell each server to load this player's homes via Redis
@@ -96,6 +106,7 @@ public class PlayerJoinListener implements Listener {
                 }
             }
         }, 10);
+
         if (!DatabaseEditor.getNick(uuid).equals("")) {
             player.setDisplayName(DatabaseEditor.getNick(uuid));
         }
