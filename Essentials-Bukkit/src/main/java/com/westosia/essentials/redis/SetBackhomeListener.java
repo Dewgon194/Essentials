@@ -10,6 +10,8 @@ import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
 
+import java.util.UUID;
+
 public class SetBackhomeListener implements RedisChannelListener {
 
     @Override
@@ -20,15 +22,24 @@ public class SetBackhomeListener implements RedisChannelListener {
                 Home backhome = HomeManager.fromString(message);
                 BackManager.setBackHome(backhome);
             } else {
-                // It's a UUID, remove cache
-                Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), new Runnable() {
-                    @Override
-                    public void run() {
-                        Jedis jedis = RedisConnector.getInstance().getConnection();
-                        jedis.del(message + ".back");
-                        Logger.info("deleted " + message + " backhomes");
-                    }
-                });
+                if (!message.contains(":")) {
+                    // It's a UUID, remove cache
+                    BackManager.removeEntry(UUID.fromString(message));
+                    /*
+                    Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            Jedis jedis = RedisConnector.getInstance().getConnection();
+                            jedis.del(message + ".back");
+                            Logger.info("deleted " + message + " backhomes");
+                        }
+                    });*/
+                } else {
+                    String[] split = message.split(":");
+                    UUID uuid = UUID.fromString(split[0]);
+                    int index = Integer.parseInt(split[1]);
+                    BackManager.setBackIndex(uuid, index);
+                }
             }
         }
     }

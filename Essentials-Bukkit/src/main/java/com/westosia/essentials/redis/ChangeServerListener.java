@@ -6,7 +6,9 @@ import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
 import com.westosia.redisapi.redis.RedisChannelListener;
 import com.westosia.redisapi.redis.RedisConnector;
+import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
+import redis.clients.jedis.Jedis;
 
 import java.util.UUID;
 
@@ -35,6 +37,7 @@ public class ChangeServerListener implements RedisChannelListener {
                             Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().publish(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), serverChange.toString()), 2);
                         }
                     }
+                    // Only do this on one server
                     if (serverChange.getFromServer().equalsIgnoreCase(Main.getInstance().SERVER_NAME)) {
                         // Start a timer for 5 seconds, if the ServerChange hasn't updated, they are offline
                         Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
@@ -48,6 +51,10 @@ public class ChangeServerListener implements RedisChannelListener {
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, serverChange.getWhosChanging().toString());
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, serverChange.getWhosChanging().toString());
+
+                                Jedis jedis = RedisConnector.getInstance().getConnection();
+                                jedis.del(serverChange.getWhosChanging() + ".back");
+                                Logger.info("deleted " + serverChange.getWhosChanging() + " backhomes");
                             }
                         }, 100);
                     }

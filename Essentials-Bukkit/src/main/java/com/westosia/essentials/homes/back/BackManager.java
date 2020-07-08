@@ -14,9 +14,22 @@ import java.util.*;
 public class BackManager {
 
     private static Map<UUID, List<Home>> backHomes = new HashMap<>();
+    private static Map<UUID, Integer> backIndex = new HashMap<>();
 
     public static List<Home> getBackHomes(UUID uuid) {
         return backHomes.get(uuid);
+    }
+
+    public static int getBackIndex(UUID uuid) {
+        return backIndex.getOrDefault(uuid, 0);
+    }
+
+    public static void setBackIndex(UUID uuid, int index) {
+        int backHomesAmount = BackManager.getBackHomes(uuid).size();
+        if (index >= backHomesAmount) {
+            index = backHomesAmount - 1;
+        }
+        backIndex.put(uuid, index);
     }
 
     public static void cacheBackHome(Home backHome) {
@@ -29,7 +42,7 @@ public class BackManager {
                 playerBackHomes.remove(0);
             }
         }
-        playerBackHomes.add(backHome);
+        playerBackHomes.add(getBackIndex(backHome.getOwner().getUniqueId()), backHome);
         backHomes.put(backHome.getOwner().getUniqueId(), playerBackHomes);
     }
 
@@ -63,5 +76,10 @@ public class BackManager {
             homeNum = playerBackHomes.size();
         }
         return new Home(uuid, "back" + homeNum, Main.getInstance().SERVER_NAME, location);
+    }
+
+    public static void removeEntry(UUID uuid) {
+        backHomes.remove(uuid);
+        backIndex.remove(uuid);
     }
 }

@@ -80,18 +80,20 @@ public class PlayerJoinListener implements Listener {
                         }
                     }
                     // Send player to home if that's the server change reason
-                    if (serverChange.getReason() == ServerChange.Reason.HOME_TELEPORT) {
+                    if (serverChange.getReason() == ServerChange.Reason.HOME_TELEPORT || serverChange.getReason() == ServerChange.Reason.BACK_TELEPORT) {
                         String homeString = serverChange.readInfo();
+                        // TODO: figure out why this returns null on home tp now
                         Home home = HomeManager.fromString(homeString);
                         player.teleport(home.getLocation());
-                        WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Teleported to home &f" + home.getName());
+                        if (serverChange.getReason() == ServerChange.Reason.HOME_TELEPORT) {
+                            WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Teleported to home &f" + home.getName());
+                        } else if (serverChange.getReason() == ServerChange.Reason.BACK_TELEPORT) {
+                            WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Teleported to previous location");
+                        }
                     }
                 } else {
                     // Just joined the server, load homes
-                    //TODO: change this to not be sync (and perms)
-                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, BackManager.createBackHome(uuid, player.getLocation()).toString());
                     if (HomeManager.getHomes(player) == null) {
-                        Logger.info(uuid.toString()  + " needs homes loaded");
                         // Tell each server to load this player's homes via Redis
                         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
                             // Get homes from database
@@ -106,10 +108,12 @@ public class PlayerJoinListener implements Listener {
                 }
             }
         }, 10);
-
-        if (!DatabaseEditor.getNick(uuid).equals("")) {
-            player.setDisplayName(DatabaseEditor.getNick(uuid));
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
+            String nickName = DatabaseEditor.getNick(uuid);
+            if (!nickName.equals("")) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> player.setDisplayName(nickName));
+            }
+        });
 
     }
 

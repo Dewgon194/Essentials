@@ -10,6 +10,7 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSpectatorCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
+import com.westosia.essentials.bukkit.listeners.PlayerTeleportListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
@@ -67,7 +68,8 @@ public class Main extends JavaPlugin {
 
         registerEvents(
                 new PlayerLeaveListener(),
-                new PlayerJoinListener()
+                new PlayerJoinListener(),
+                new PlayerTeleportListener()
                 );
 
         registerCommands(
