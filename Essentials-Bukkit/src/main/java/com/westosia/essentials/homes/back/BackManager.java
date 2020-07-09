@@ -13,6 +13,8 @@ import java.util.*;
 
 public class BackManager {
 
+    private static final int MAX_BACK_HOMES = 6;
+
     private static Map<UUID, List<Home>> backHomes = new HashMap<>();
     private static Map<UUID, Integer> backIndex = new HashMap<>();
 
@@ -25,11 +27,25 @@ public class BackManager {
     }
 
     public static void setBackIndex(UUID uuid, int index) {
+        int finalIndex = cacheBackIndex(uuid, index);
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> RedisConnector.getInstance().getConnection().set(uuid.toString() + ".backIndex", finalIndex + ""));
+    }
+
+    public static int getIndexFromRedis(UUID uuid) {
+        String indexString = RedisConnector.getInstance().getConnection().get(uuid.toString() + "backIndex");
+        if (indexString == null || indexString.isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(indexString);
+    }
+
+    public static int cacheBackIndex(UUID uuid, int index) {
         int backHomesAmount = BackManager.getBackHomes(uuid).size();
         if (index >= backHomesAmount) {
             index = backHomesAmount - 1;
         }
         backIndex.put(uuid, index);
+        return index;
     }
 
     public static void cacheBackHome(Home backHome) {
@@ -38,7 +54,7 @@ public class BackManager {
             playerBackHomes = new ArrayList<>();
         } else {
             // Remove oldest backhome if they have 5 or more
-            if (playerBackHomes.size() >= 5) {
+            if (playerBackHomes.size() >= MAX_BACK_HOMES) {
                 playerBackHomes.remove(0);
             }
         }
@@ -51,8 +67,8 @@ public class BackManager {
 
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
             Jedis jedis = RedisConnector.getInstance().getConnection();
-            String key = backHome.getOwner().getUniqueId() + ".back";
-            if (jedis.llen(key) >= 5) {
+            String key = backHome.getOwner().getUniqueId().toString() + ".back";
+            if (jedis.llen(key) >= MAX_BACK_HOMES) {
                 jedis.rpop(key);
             }
             jedis.lpush(key, backHome.toString());
@@ -62,7 +78,7 @@ public class BackManager {
 
     public static List<Home> getBackHomesFromRedis(UUID uuid) {
         Jedis jedis = RedisConnector.getInstance().getConnection();
-        String key = uuid + ".back";
+        String key = uuid.toString() + ".back";
         List<String> homeStrings = jedis.lrange(key, 0, jedis.llen(key));
         List<Home> homes = new ArrayList<>();
         homeStrings.forEach(homeString -> homes.add(HomeManager.fromString(homeString)));

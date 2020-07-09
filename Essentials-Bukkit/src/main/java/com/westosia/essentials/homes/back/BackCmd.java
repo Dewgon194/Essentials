@@ -27,6 +27,7 @@ public class BackCmd extends BaseCommand {
         int backIndex = BackManager.getBackIndex(uuid);
         List<Home> backHomes = BackManager.getBackHomes(uuid);
         Home backHome = backHomes.get(backIndex);
+        player.sendMessage(backIndex + " back index");
         if (!backHome.getServerName().equalsIgnoreCase(Main.getInstance().SERVER_NAME)) {
             ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.BACK_TELEPORT, Main.getInstance().SERVER_NAME, backHome.getServerName());
             serverChange.addRedisInfo(backHome.toString());
@@ -37,7 +38,9 @@ public class BackCmd extends BaseCommand {
             backHome.use();
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Teleported to previous location");
         }
-        RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, uuid + ":" + calculateNewIndex(uuid));
+        backIndex = calculateNewIndex(uuid);
+        BackManager.setBackIndex(uuid, backIndex);
+        RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, uuid.toString() + ":" + backIndex);
     }
 
     private int calculateNewIndex(UUID uuid) {

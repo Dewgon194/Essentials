@@ -53,7 +53,8 @@ public class ChangeServerListener implements RedisChannelListener {
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, serverChange.getWhosChanging().toString());
 
                                 Jedis jedis = RedisConnector.getInstance().getConnection();
-                                jedis.del(serverChange.getWhosChanging() + ".back");
+                                jedis.del(serverChange.getWhosChanging().toString() + ".back");
+                                jedis.del(serverChange.getWhosChanging().toString() + ".backIndex");
                                 Logger.info("deleted " + serverChange.getWhosChanging() + " backhomes");
                             }
                         }, 100);

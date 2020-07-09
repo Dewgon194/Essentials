@@ -72,6 +72,8 @@ public class PlayerJoinListener implements Listener {
                                 if (backHomes.size() > 0) {
                                     backHomes.forEach(BackManager::cacheBackHome);
                                 }
+                                // Get backhomes index from Redis variable
+                                BackManager.cacheBackIndex(uuid, BackManager.getIndexFromRedis(uuid));
                             });
                         } else {
                             // Joined for any other reason. Check previous server for homes
@@ -82,7 +84,6 @@ public class PlayerJoinListener implements Listener {
                     // Send player to home if that's the server change reason
                     if (serverChange.getReason() == ServerChange.Reason.HOME_TELEPORT || serverChange.getReason() == ServerChange.Reason.BACK_TELEPORT) {
                         String homeString = serverChange.readInfo();
-                        // TODO: figure out why this returns null on home tp now
                         Home home = HomeManager.fromString(homeString);
                         player.teleport(home.getLocation());
                         if (serverChange.getReason() == ServerChange.Reason.HOME_TELEPORT) {
@@ -107,7 +108,7 @@ public class PlayerJoinListener implements Listener {
                     }
                 }
             }
-        }, 10);
+        }, 10); //TODO: make this or the tp schedule wait a bit longer because slow spawn server
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
             String nickName = DatabaseEditor.getNick(uuid);
             if (!nickName.equals("")) {
