@@ -1,6 +1,6 @@
 package com.westosia.essentials.listeners;
 
-import com.westosia.essentials.utils.TeleportRequest;
+import com.westosia.essentials.utils.teleports.TeleportRequest;
 import com.westosia.essentials.utils.Text;
 import de.myzelyam.api.vanish.BungeeVanishAPI;
 import net.md_5.bungee.api.ProxyServer;

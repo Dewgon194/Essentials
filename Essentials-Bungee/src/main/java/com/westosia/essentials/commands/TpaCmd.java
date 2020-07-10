@@ -2,8 +2,10 @@ package com.westosia.essentials.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import com.westosia.essentials.utils.TeleportRequest;
+import com.westosia.essentials.utils.teleports.Teleport;
+import com.westosia.essentials.utils.teleports.TeleportRequest;
 import com.westosia.essentials.utils.Text;
+import com.westosia.essentials.utils.teleports.TeleportTarget;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -23,7 +25,9 @@ public class TpaCmd extends BaseCommand {
                     if (currentRequest != null && currentRequest.getSender().equals(player)) {
                         player.sendMessage(Text.format("&4&l(!) &cYou've already sent &f" + playerSendTo.getName() + "&c a request. Please wait a moment before sending them another"));
                     } else {
-                        new TeleportRequest(player, playerSendTo, playerSendTo);
+                        TeleportTarget<ProxiedPlayer> goingTo = new TeleportTarget<>();
+                        goingTo.setType(playerSendTo);
+                        new TeleportRequest(player, player, goingTo);
                         player.sendMessage(Text.format("&3&l(!) &bSent a request to teleport to &f" + playerSendTo.getName()));
                         playerSendTo.sendMessage(Text.format("&3&l(!) &f" + player.getName() + " &bhas requested to teleport to you"));
                     }
@@ -31,6 +35,8 @@ public class TpaCmd extends BaseCommand {
                     player.sendMessage(Text.format("&4&l(!) &cYou cannot send yourself a teleport request"));
                 }
             }
+        } else {
+            player.sendMessage(Text.format("&4&l(!) &cNo player specified!"));
         }
     }
 }
