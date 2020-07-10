@@ -8,6 +8,7 @@ import com.westosia.redisapi.redis.RedisChannelListener;
 import com.westosia.redisapi.redis.RedisConnector;
 import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 
 import java.util.UUID;
@@ -40,22 +41,29 @@ public class ChangeServerListener implements RedisChannelListener {
                     // Only do this on one server
                     if (serverChange.getFromServer().equalsIgnoreCase(Main.getInstance().SERVER_NAME)) {
                         // Start a timer for 5 seconds, if the ServerChange hasn't updated, they are offline
+                        Player player = Bukkit.getPlayer(serverChange.getWhosChanging());
                         Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
-                            // Player has not connected to another server in 5 seconds, assume them offline
+                            // Player has not connected to another server in 5 seconds
                             if (ServerChange.isChangingServers(serverChange.getWhosChanging())) {
-                                // Already saved to database, just uncache locally
-                                if (serverChange.getReason() != ServerChange.Reason.SERVER_DOWN) {
-                                    // Not saved to database; ask server the player came from to save to database
-                                    DatabaseEditor.saveAllHomes(serverChange.getWhosChanging());
-                                }
-                                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, serverChange.getWhosChanging().toString());
-                                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());
-                                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, serverChange.getWhosChanging().toString());
+                                // Player is not on this server (failed server change) -- assume them offline
+                                if (player == null) {
+                                    // Already saved to database, just uncache locally
+                                    if (serverChange.getReason() != ServerChange.Reason.SERVER_DOWN) {
+                                        // Not saved to database; ask server the player came from to save to database
+                                        DatabaseEditor.saveAllHomes(serverChange.getWhosChanging());
+                                    }
+                                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, serverChange.getWhosChanging().toString());
+                                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());
+                                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, serverChange.getWhosChanging().toString());
 
-                                Jedis jedis = RedisConnector.getInstance().getConnection();
-                                jedis.del(serverChange.getWhosChanging().toString() + ".back");
-                                jedis.del(serverChange.getWhosChanging().toString() + ".backIndex");
-                                Logger.info("deleted " + serverChange.getWhosChanging() + " backhomes");
+                                    Jedis jedis = RedisConnector.getInstance().getConnection();
+                                    jedis.del(serverChange.getWhosChanging().toString() + ".back");
+                                    jedis.del(serverChange.getWhosChanging().toString() + ".backIndex");
+                                    Logger.info("deleted " + serverChange.getWhosChanging() + " backhomes");
+                                } else {
+                                    // Player is on this server (failed server change). Just uncache
+                                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());
+                                }
                             }
                         }, 100);
                     }

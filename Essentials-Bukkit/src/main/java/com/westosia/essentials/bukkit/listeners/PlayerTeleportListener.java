@@ -66,48 +66,7 @@ public class PlayerTeleportListener implements Listener {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, addToBack.get(finalI).toString()), i * 2);
                     }
                 }
-            }, 8);
+            }, 10);
         }
-        /*
-        List<Home> addToBack = new ArrayList<>();
-        if (ServerChange.isChangingServers(player.getUniqueId())) {
-            ServerChange serverChange = ServerChange.getServerChange(player.getUniqueId());
-            if (serverChange.getReason().name().contains("TELEPORT")) {
-                Home backHome = HomeManager.fromString(serverChange.readInfo());
-                addToBack.add(backHome);
-            }
-        } else {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
-                if (player.hasPermission("essentials.command.back")) {
-                    List<Home> backHomes = BackManager.getBackHomes(event.getPlayer().getUniqueId());
-                    if (backHomes != null) {
-                        for (Home backHome : backHomes) {
-                            // Do not put in the list of backHomes if you are teleporting to a backHome
-                            if (backHome.getLocation().equals(event.getTo())) {
-                                Logger.broadcast("not adding to backhomes");
-                                //event.getPlayer().sendMessage("not adding to backhomes");
-                                return;
-                            }
-                        }
-
-                    }
-                    Logger.broadcast("you teleported");
-                    for (int i = 0; i < addToBack.size(); i++) {
-                        int finalI = i;
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, addToBack.get(finalI).toString()), i);
-                    }
-                    //event.getPlayer().sendMessage("you teleported");
-                    Home fromBack = BackManager.createBackHome(event.getPlayer().getUniqueId(), event.getFrom());
-                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, fromBack.toString());
-                    // Wait a tick so the first one goes through Redis before this one (as opposed to the same exact time)
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
-                        Home toBack = BackManager.createBackHome(event.getPlayer().getUniqueId(), event.getTo());
-                        RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, toBack.toString());
-                    }, 1);
-
-                }
-            }, 4);
-        }
-         */
     }
 }
