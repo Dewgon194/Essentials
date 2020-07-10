@@ -6,7 +6,6 @@ import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
 import com.westosia.redisapi.redis.RedisChannelListener;
 import com.westosia.redisapi.redis.RedisConnector;
-import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
@@ -59,7 +58,6 @@ public class ChangeServerListener implements RedisChannelListener {
                                     Jedis jedis = RedisConnector.getInstance().getConnection();
                                     jedis.del(serverChange.getWhosChanging().toString() + ".back");
                                     jedis.del(serverChange.getWhosChanging().toString() + ".backIndex");
-                                    Logger.info("deleted " + serverChange.getWhosChanging() + " backhomes");
                                 } else {
                                     // Player is on this server (failed server change). Just uncache
                                     RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());

@@ -27,7 +27,6 @@ public class BackCmd extends BaseCommand {
         int backIndex = BackManager.getBackIndex(uuid);
         List<Home> backHomes = BackManager.getBackHomes(uuid);
         Home backHome = backHomes.get(backIndex);
-        player.sendMessage(backIndex + " back index");
         if (!backHome.getServerName().equalsIgnoreCase(Main.getInstance().SERVER_NAME)) {
             ServerChange serverChange = new ServerChange(player.getUniqueId(), ServerChange.Reason.BACK_TELEPORT, Main.getInstance().SERVER_NAME, backHome.getServerName());
             serverChange.addRedisInfo(backHome.toString());

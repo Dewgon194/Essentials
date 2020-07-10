@@ -6,7 +6,6 @@ import com.westosia.essentials.homes.back.BackManager;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
 import com.westosia.westosiaapi.Main;
-import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,28 +29,24 @@ public class PlayerTeleportListener implements Listener {
                     if (ServerChange.isChangingServers(player.getUniqueId())) {
                         ServerChange serverChange = ServerChange.getServerChange(player.getUniqueId());
                         if (serverChange.getReason().name().contains("TELEPORT")) {
-                            Logger.broadcast("changing servers for a teleport");
                             Home backHome = HomeManager.fromString(serverChange.readInfo());
                             // Put info back so the join listener can still read it
                             serverChange.addRedisInfo(backHome.toString());
                             List<Home> backHomes = BackManager.getBackHomes(player.getUniqueId());
                             for (Home home : backHomes) {
                                 if (home.getLocation().equals(backHome.getLocation())) {
-                                    Logger.broadcast("(back)home already logged");
                                     return;
                                 }
                             }
                             addToBack.add(backHome);
                         }
                     } else {
-                        Logger.broadcast("not changing servers");
                         // Not changing servers, record to and from locations
                         List<Home> backHomes = BackManager.getBackHomes(event.getPlayer().getUniqueId());
                         if (backHomes != null) {
                             for (Home backHome : backHomes) {
                                 // Do not put in the list of backHomes if you are teleporting to a backHome
                                 if (backHome.getLocation().equals(event.getTo())) {
-                                    Logger.broadcast("not adding to backhomes");
                                     return;
                                 }
                             }
@@ -60,7 +55,6 @@ public class PlayerTeleportListener implements Listener {
                         addToBack.add(BackManager.createBackHome(event.getPlayer().getUniqueId(), event.getTo()));
                     }
                     // Tell Redis about the new backHomes
-                    Logger.broadcast("you teleported");
                     for (int i = 0; i < addToBack.size(); i++) {
                         int finalI = i;
                         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_BACKHOME, addToBack.get(finalI).toString()), i * 2);

@@ -9,7 +9,6 @@ import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
-import com.westosia.westosiaapi.utils.Logger;
 import com.westosia.westosiaapi.utils.Text;
 import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import org.bukkit.Bukkit;
