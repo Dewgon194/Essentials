@@ -118,4 +118,5 @@ public class PlayerJoinListener implements Listener {
         is.setItemMeta(isMeta);
         e.getPlayer().getInventory().addItem(is);
     }
+    //Hippity Hoppity
 }
