@@ -73,6 +73,7 @@ public class Main extends JavaPlugin {
 
         registerCommands(
                 new AnvilCmd(),
+                new BrewCmd(),
                 new HealPlayerCmd(),
                 new FeedPlayerCmd(),
                 new SmiteCmd(),

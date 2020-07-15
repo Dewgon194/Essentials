@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.*;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 @CommandAlias("anvil")
 @CommandPermission("essentials.command.anvil")
