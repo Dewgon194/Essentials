@@ -51,6 +51,7 @@ public class Main extends JavaPlugin {
         FIRST_SPAWN_LOC = LocationStrings.fromConfig("first-spawn");
         checkDB();
         checkNickDB();
+        checkSeenDB();
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         // If people are on when enabled, load them in from db to prevent yeeting of homes on reload
         // This really shouldn't be done live anyways. Repeated reloads produces odd behaviour from the Redis listeners
@@ -159,6 +160,15 @@ public class Main extends JavaPlugin {
             boolean exists = DatabaseEditor.checkIfNickTableExists();
             if (!exists) {
                 DatabaseEditor.createNickTable();
+            }
+        });
+    }
+
+    private void checkSeenDB() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            boolean exists = DatabaseEditor.checkIfSeenTableExists();
+            if (!exists) {
+                DatabaseEditor.createSeenTable();
             }
         });
     }

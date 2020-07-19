@@ -20,6 +20,8 @@ public class DatabaseEditor {
     private static final String COLUMN_HOME_STRING = "home_string";
     private static final String NICKNAME_TABLE = "nicknames";
     private static final String COLUMN_NICKNAME = "nickname";
+    private static final String SEEN_TABLE = "seeninfo";
+    private static final String COLUMN_TIME_PLAYED = "time_online";
 
 
     public static void createTable() {
@@ -46,6 +48,19 @@ public class DatabaseEditor {
             ps.close();
             con.close();
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createSeenTable() {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("CREATE TABLE " + SEEN_TABLE +
+                    " (" + COLUMN_UUID + " varchar(36), " +
+                    COLUMN_TIME_PLAYED + " bigint(255));");
+            ps.execute();
+            ps.close();
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -87,6 +102,23 @@ public class DatabaseEditor {
         return exists;
     }
 
+    public static boolean checkIfSeenTableExists() {
+        boolean exists = false;
+        //TODO: check and create database & table code?
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            if (con == null) Logger.warning("con is null");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + SEEN_TABLE + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                exists = true;
+            }
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
 
     public static Map<String, Home> getHomesInDB(UUID uuid) {
         Map<String, Home> homesInDB = new HashMap<>();
@@ -202,6 +234,37 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("DELETE FROM nicknames WHERE uuid = '" + uuid.toString() + "';"
             );
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static long getTimePlayed(UUID uuid) {
+        long time = 0;
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT" +  COLUMN_TIME_PLAYED + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;"
+            );
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                time = rs.getLong(COLUMN_TIME_PLAYED);
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+    public static void setTimePlayed(UUID uuid, long time) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
+                    COLUMN_TIME_PLAYED + ") VALUES ('" + uuid.toString() + "', " + time + ") ON DUPLICATE KEY UPDATE " +
+                    COLUMN_TIME_PLAYED + " = " + time + ";");
             ps.execute();
             ps.close();
             con.close();
