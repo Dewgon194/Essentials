@@ -17,10 +17,7 @@ import com.westosia.essentials.homes.commands.DelHomeCmd;
 import com.westosia.essentials.homes.commands.HomeCmd;
 import com.westosia.essentials.homes.commands.HomesCmd;
 import com.westosia.essentials.homes.commands.SetHomeCmd;
-import com.westosia.essentials.redis.ChangeServerListener;
-import com.westosia.essentials.redis.DelHomeListener;
-import com.westosia.essentials.redis.QueryHomesListener;
-import com.westosia.essentials.redis.SetHomeListener;
+import com.westosia.essentials.redis.*;
 import com.westosia.essentials.utils.DatabaseEditor;
 import com.westosia.essentials.utils.LocationStrings;
 import com.westosia.essentials.utils.RedisAnnouncer;
@@ -65,6 +62,7 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.DEL_HOME.getChannel(), new DelHomeListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), new ChangeServerListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.QUERY_HOMES.getChannel(), new QueryHomesListener());
+        RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SUDO.getChannel(), new SudoListener());
 
         registerEvents(
                 new PlayerLeaveListener(),
@@ -94,7 +92,8 @@ public class Main extends JavaPlugin {
                 new SpawnCmd(),
                 new SetSpawnCmd(),
                 new JoinKitCmd(),
-                new InvseeCmd()
+                new InvseeCmd(),
+                new SudoCmd()
         );
 
         // register bungee plugin channel
