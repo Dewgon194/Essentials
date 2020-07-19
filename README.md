@@ -1,10 +1,10 @@
 # Essentials
 Teleports, homes, and other useful commands from Essentials, without all the extras
 
-##API
-###ServerChange
+## API
+### ServerChange
 Since Bungee is an unreliable little b, I've made my own Redis-based server change system.
-####New Server Change
+#### New Server Change
 ```java
 ServerChange serverChange = new ServerChange(uuid, reason, fromServer);
 ServerChange serverChange = new ServerChange(uuid, reason, fromServer, toServer);
@@ -17,7 +17,7 @@ Server names are determined by the Bungee config file.
 
 Check the `ServerChange` class to see all the available methods.
 
-####Announcing the Server Change
+#### Announcing the Server Change
 After initialising the server change, and giving it any additional information with `addRedisInfo(info)`, you will need
 to tell Redis to tell every other:
 ```java
@@ -29,13 +29,13 @@ The `HomeCmd` class gives a good example on how to do this.
 
 You can also announce a UUID as a string to tell all servers to uncache/forget their current server change.
 
-####Behaviour
+#### Behaviour
 - Redis seems to announce rather quickly and may fire before the player joins the other server. There is a delay to
 conteract this.
 - Since there is no certain way to determine if a player is off the network from a single server, a player will is
 assumed offline if they haven't joined another server (to complete their ServerChange) in 5 seconds. 
 
-###Info Listeners
+### Info Listeners
 I have attempted to keep Redis stuff kind of neat by using a system of listeners and announcers. Here's what to do:
 1. Create a new listener in the `redis` package.
     ```java
