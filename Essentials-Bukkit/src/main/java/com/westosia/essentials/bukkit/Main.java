@@ -63,6 +63,7 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), new ChangeServerListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.QUERY_HOMES.getChannel(), new QueryHomesListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SUDO.getChannel(), new SudoListener());
+        RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.NICKNAME.getChannel(), new NicknameListener());
 
         registerEvents(
                 new PlayerLeaveListener(),

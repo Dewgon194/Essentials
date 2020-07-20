@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.westosia.essentials.utils.DatabaseEditor;
+import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.Bukkit;
@@ -22,11 +23,13 @@ public class NickCmd extends BaseCommand {
             player.setDisplayName(player.getName());
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Nickname Cleared");
             DatabaseEditor.removeNick(player.getUniqueId());
+            RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.NICKNAME, player.getName() + "|" + player.getName());
         } else if (args.length == 1) {
             if (Bukkit.getPlayer(args[0]) == null) {
                 player.setDisplayName(args[0]);
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Your nickname has been set");
                 DatabaseEditor.saveNick(args[0], player.getUniqueId());
+                RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.NICKNAME, player.getName() + "|" + args[0]);
             } else if (Bukkit.getPlayer(args[0]) != player) {
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Too few arguments, Correct usage is /nick other <Player> <Nickname>");
             } else {
@@ -40,6 +43,8 @@ public class NickCmd extends BaseCommand {
                     WestosiaAPI.getNotifier().sendChatMessage(nicked, Notifier.NotifyStatus.SUCCESS, "Your nickname has been cleared by " + player.getName());
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Nickname cleared");
                     DatabaseEditor.removeNick(nicked.getUniqueId());
+                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.NICKNAME, nicked.getName() + "|" + nicked.getName());
+
 
                 } else {
                     Player nicked = Bukkit.getPlayer(args[0]);
@@ -47,6 +52,8 @@ public class NickCmd extends BaseCommand {
                     WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, args[0] + "'s nickname has been set");
                     WestosiaAPI.getNotifier().sendChatMessage(nicked, Notifier.NotifyStatus.SUCCESS, "Your nickname has been set to " + args[1] + ", by " + player.getName());
                     DatabaseEditor.saveNick(args[1], nicked.getUniqueId());
+                    RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.NICKNAME, nicked.getName() + "|" + args[1]);
+
                 }
             } else {
                 WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Too many arguments, Correct usage is /nick other <Player> <Nickname>");
