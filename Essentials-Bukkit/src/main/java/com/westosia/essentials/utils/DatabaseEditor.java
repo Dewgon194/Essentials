@@ -22,6 +22,7 @@ public class DatabaseEditor {
     private static final String COLUMN_NICKNAME = "nickname";
     private static final String SEEN_TABLE = "seeninfo";
     private static final String COLUMN_LAST_SEEN = "last_seen";
+    private static final String COLUMN_LAST_LOCATION = "last_location";
 
     public static void createTable() {
         //"CREATE DATABASE 'essentials'"
@@ -56,7 +57,7 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("CREATE TABLE " + SEEN_TABLE +
                     " (" + COLUMN_UUID + " varchar(36), " +
-                    COLUMN_LAST_SEEN + " bigint(255), UNIQUE INDEX `uuid` (`uuid`) USING BTREE);");
+                    COLUMN_LAST_SEEN + " bigint(255), " + COLUMN_LAST_LOCATION + " varchar(255), UNIQUE INDEX `uuid` (`uuid`) USING BTREE);");
             ps.execute();
             ps.close();
             con.close();
@@ -264,6 +265,33 @@ public class DatabaseEditor {
             PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
                     COLUMN_LAST_SEEN+ ") VALUES ('" + uuid.toString() + "', " + time + ") ON DUPLICATE KEY UPDATE " +
                     COLUMN_LAST_SEEN + " = " + time + ";");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getLastLocation(UUID uuid) {
+        String loc = "";
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_LAST_LOCATION + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                loc = rs.getString(COLUMN_LAST_LOCATION);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return loc;
+    }
+
+    public static void setLastLocation(UUID uuid, String location) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
+                    COLUMN_LAST_LOCATION + ") VALUES ('" + uuid.toString() + "', '" + location + "') ON DUPLICATE KEY UPDATE " +
+                    COLUMN_LAST_LOCATION+ " = '" + location + "';");
             ps.execute();
             ps.close();
             con.close();

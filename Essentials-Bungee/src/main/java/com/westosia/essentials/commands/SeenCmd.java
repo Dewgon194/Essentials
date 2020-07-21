@@ -39,6 +39,10 @@ public class SeenCmd extends BaseCommand {
         output.writeUTF(sender.getName());
         output.writeUTF(target);
 
-        sender.getServer().sendData("BungeeCord", output.toByteArray());
+        if (offline) {
+            sender.getServer().sendData("BungeeCord", output.toByteArray());
+        } else {
+            ProxyServer.getInstance().getPlayer(target).getServer().sendData("BungeeCord", output.toByteArray());
+        }
     }
 }
