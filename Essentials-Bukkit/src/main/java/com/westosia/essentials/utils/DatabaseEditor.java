@@ -21,8 +21,7 @@ public class DatabaseEditor {
     private static final String NICKNAME_TABLE = "nicknames";
     private static final String COLUMN_NICKNAME = "nickname";
     private static final String SEEN_TABLE = "seeninfo";
-    private static final String COLUMN_TIME_PLAYED = "time_online";
-
+    private static final String COLUMN_LAST_SEEN = "last_seen";
 
     public static void createTable() {
         //"CREATE DATABASE 'essentials'"
@@ -57,7 +56,7 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("CREATE TABLE " + SEEN_TABLE +
                     " (" + COLUMN_UUID + " varchar(36), " +
-                    COLUMN_TIME_PLAYED + " bigint(255));");
+                    COLUMN_LAST_SEEN + " bigint(255), UNIQUE INDEX `uuid` (`uuid`) USING BTREE);");
             ps.execute();
             ps.close();
             con.close();
@@ -242,14 +241,14 @@ public class DatabaseEditor {
         }
     }
 
-    public static long getTimePlayed(UUID uuid) {
+    public static long getLastSeen(UUID uuid) {
         long time = 0;
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
-            PreparedStatement ps = con.prepareStatement("SELECT" +  COLUMN_TIME_PLAYED + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;"
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_LAST_SEEN + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;"
             );
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                time = rs.getLong(COLUMN_TIME_PLAYED);
+                time = rs.getLong(COLUMN_LAST_SEEN);
             }
             ps.close();
             rs.close();
@@ -260,11 +259,11 @@ public class DatabaseEditor {
         return time;
     }
 
-    public static void setTimePlayed(UUID uuid, long time) {
+    public static void setLastSeen(UUID uuid, long time) {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
-                    COLUMN_TIME_PLAYED + ") VALUES ('" + uuid.toString() + "', " + time + ") ON DUPLICATE KEY UPDATE " +
-                    COLUMN_TIME_PLAYED + " = " + time + ";");
+                    COLUMN_LAST_SEEN+ ") VALUES ('" + uuid.toString() + "', " + time + ") ON DUPLICATE KEY UPDATE " +
+                    COLUMN_LAST_SEEN + " = " + time + ";");
             ps.execute();
             ps.close();
             con.close();

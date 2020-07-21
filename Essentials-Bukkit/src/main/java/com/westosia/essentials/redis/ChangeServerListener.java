@@ -8,6 +8,7 @@ import com.westosia.redisapi.redis.RedisChannelListener;
 import com.westosia.redisapi.redis.RedisConnector;
 import org.bukkit.Bukkit;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class ChangeServerListener implements RedisChannelListener {
@@ -47,6 +48,8 @@ public class ChangeServerListener implements RedisChannelListener {
                                 }
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.DEL_HOME, serverChange.getWhosChanging().toString());
                                 RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());
+                                // Save last seen time
+                                DatabaseEditor.setLastSeen(serverChange.getWhosChanging(), Instant.now().getEpochSecond() - 5);
                             }
                         }, 100);
                     }
