@@ -1,4 +1,4 @@
-package com.westosia.essentials.bukkit.commands;
+package com.westosia.essentials.bukkit.virtualappliances.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;

@@ -11,7 +11,11 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
+import com.westosia.essentials.bukkit.virtualappliances.PlayerAppliances;
 import com.westosia.essentials.bukkit.virtualappliances.TickerTask;
+import com.westosia.essentials.bukkit.virtualappliances.commands.AnvilCmd;
+import com.westosia.essentials.bukkit.virtualappliances.commands.BrewCmd;
+import com.westosia.essentials.bukkit.virtualappliances.commands.FurnaceCmd;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.homes.commands.DelHomeCmd;
@@ -96,7 +100,8 @@ public class Main extends JavaPlugin {
                 new NickCmd(),
                 new SpawnCmd(),
                 new SetSpawnCmd(),
-                new JoinKitCmd()
+                new JoinKitCmd(),
+                new FurnaceCmd()
         );
 
         // register bungee plugin channel
@@ -104,6 +109,7 @@ public class Main extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginMessageReceiver());
         queryServerName();
 
+        PlayerAppliances.load();
         new TickerTask();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
