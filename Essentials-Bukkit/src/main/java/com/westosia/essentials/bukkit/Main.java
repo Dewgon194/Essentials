@@ -10,9 +10,11 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSpectatorCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
+import com.westosia.essentials.bukkit.listeners.PlayerTeleportListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.homes.back.BackCmd;
 import com.westosia.essentials.homes.commands.DelHomeCmd;
 import com.westosia.essentials.homes.commands.HomeCmd;
 import com.westosia.essentials.homes.commands.HomesCmd;
@@ -63,10 +65,12 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.CHANGE_SERVER.getChannel(), new ChangeServerListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.QUERY_HOMES.getChannel(), new QueryHomesListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SUDO.getChannel(), new SudoListener());
+        RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SET_BACKHOME.getChannel(), new SetBackhomeListener());
 
         registerEvents(
                 new PlayerLeaveListener(),
-                new PlayerJoinListener()
+                new PlayerJoinListener(),
+                new PlayerTeleportListener()
                 );
 
         registerCommands(
@@ -93,7 +97,8 @@ public class Main extends JavaPlugin {
                 new SetSpawnCmd(),
                 new JoinKitCmd(),
                 new InvseeCmd(),
-                new SudoCmd()
+                new SudoCmd(),
+                new BackCmd()
         );
 
         // register bungee plugin channel

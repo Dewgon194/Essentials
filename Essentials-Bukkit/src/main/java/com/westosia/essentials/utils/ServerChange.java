@@ -140,7 +140,7 @@ public class ServerChange {
     }
 
     public enum Reason {
-        VOLUNTARY(0), SERVER_DOWN(1), HOME_TELEPORT(2), TELEPORT_REQUEST(3);
+        VOLUNTARY(0), SERVER_DOWN(1), HOME_TELEPORT(2), BACK_TELEPORT(3);
         private int reason;
 
         Reason(int reason) {
