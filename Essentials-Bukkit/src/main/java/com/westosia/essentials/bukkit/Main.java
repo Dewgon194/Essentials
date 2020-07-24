@@ -11,6 +11,7 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
+import com.westosia.essentials.bukkit.virtualappliances.TickerTask;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.homes.commands.DelHomeCmd;
@@ -102,6 +103,8 @@ public class Main extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel( this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginMessageReceiver());
         queryServerName();
+
+        new TickerTask();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
     }
