@@ -1,31 +1,20 @@
 package com.westosia.essentials.bukkit.virtualappliances;
 
 import net.minecraft.server.v1_15_R1.*;
+import org.bukkit.block.Furnace;
+import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_15_R1.block.CraftFurnaceFurnace;
 import org.bukkit.inventory.InventoryHolder;
 
-public class VirtualFurnace extends TileEntityFurnace {
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
+public class VirtualFurnace extends TileEntityFurnaceFurnace {
 
     private EntityPlayer owner;
 
     public VirtualFurnace(EntityPlayer owner) {
-        super(TileEntityTypes.FURNACE, Recipes.SMELTING);
         this.owner = owner;
-    }
-
-    @Override
-    protected IChatBaseComponent getContainerName() {
-        return new ChatMessage("Vurnace");
-    }
-
-    @Override
-    protected Container createContainer(int i, PlayerInventory playerInventory) {
-        ContainerFurnace container = new ContainerFurnaceFurnace(0, owner.inventory);
-        container.checkReachable = false;
-        container.setTitle(getContainerName());
-        // Something NMS needs to keep track of invs
-        int id = owner.nextContainerCounter();
-        return container;
     }
 
     @Override
@@ -33,26 +22,29 @@ public class VirtualFurnace extends TileEntityFurnace {
         return true;
     }
 
-    @Override
-    public void update() {
 
-    }
 
     @Override
     public InventoryHolder getOwner() {
-        CraftFurnaceFurnace furnace = new CraftFurnaceFurnace(owner.getWorldServer().getWorld().getBlockAt(0, 0, 0));
+        ((CraftChunk) owner.world.getWorld().getBlockAt(0, 0, 0).getChunk()).getHandle().setTileEntity(new BlockPosition(0, 0, 0), this);
+        Furnace furnace = new CraftFurnaceFurnace(owner.world.getWorld().getBlockAt(0, 0, 0));
+        //((CraftChunk) owner.world.getWorld().getBlockAt(0, 0, 0).getChunk()).getHandle().setTileEntity(new BlockPosition(0, 0, 0), this);
         /*
+         * Setting the tile we will use, this is the only good way!
+
         try {
-            Field field = CraftFurnaceFurnace.class.getDeclaredField("block");
+            Field field = TileEntity.class.getDeclaredField("c");
             field.setAccessible(true);
-            Field modifierField = Field.class.getDeclaredField("modifiers");
-            modifierField.setAccessible(true);
-            modifierField.set(field, field.getModifiers() & ~Modifier.FINAL);
+
+            Field mfield = Field.class.getDeclaredField("modifiers");
+            mfield.setAccessible(true);
+            mfield.set(field, field.getModifiers() & ~Modifier.FINAL);
 
             field.set(furnace, this);
         } catch (Exception e) {
             e.printStackTrace();
         }*/
+
         return furnace;
     }
 }

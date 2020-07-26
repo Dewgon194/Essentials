@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Description;
 import com.westosia.essentials.bukkit.virtualappliances.PlayerAppliances;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
+import net.minecraft.server.v1_15_R1.Container;
 import org.bukkit.entity.Player;
 
 @CommandAlias("furnace|smelt")
@@ -17,7 +18,7 @@ public class FurnaceCmd extends BaseCommand {
     @Default
     @Description("Opens a furnace for the player")
     public void furnace(Player player) {
-        PlayerAppliances.getAppliances(player.getUniqueId()).openFurnace();
+        //PlayerAppliances.getAppliances(player.getUniqueId()).openFurnace();
         WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.SUCCESS, "Opened your portable furnace");
     }
 }

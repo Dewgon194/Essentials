@@ -49,6 +49,7 @@ public class Main extends JavaPlugin {
     public Location FIRST_SPAWN_LOC;
     public Location SPAWN_LOC;
     public String SERVER_NAME = "";
+    private int tickerID;
     private static Main instance;
 
     public void onEnable() {
@@ -110,12 +111,13 @@ public class Main extends JavaPlugin {
         queryServerName();
 
         PlayerAppliances.load();
-        new TickerTask();
+        tickerID = new TickerTask().getTaskId();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
     }
 
     public void onDisable() {
+        Bukkit.getScheduler().cancelTask(tickerID);
         getConfig().set("spawn-location", LocationStrings.toString(SPAWN_LOC));
         getConfig().set("first-spawn", LocationStrings.toString(FIRST_SPAWN_LOC));
         saveConfig();

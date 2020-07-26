@@ -1,9 +1,10 @@
 package com.westosia.essentials.bukkit.virtualappliances;
 
+import net.minecraft.server.v1_15_R1.Containers;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
+import net.minecraft.server.v1_15_R1.PacketPlayOutOpenWindow;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,6 +33,12 @@ public class PlayerAppliances {
             furnace = new VirtualFurnace(nmsPlayer);
         }
         nmsPlayer.openContainer(furnace);
+        // Something NMS needs to keep track of invs
+        //int id = nmsPlayer.nextContainerCounter();
+        // Create and send anvil packet
+        //PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(id, Containers.FURNACE, furnace.getContainerName());
+        //nmsPlayer.playerConnection.sendPacket(packet);
+        //nmsPlayer.activeContainer;
     }
 
     public static void load() {
