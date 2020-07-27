@@ -4,6 +4,8 @@ import com.westosia.databaseapi.database.DatabaseConnector;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.westosiaapi.utils.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,6 +25,9 @@ public class DatabaseEditor {
     private static final String SEEN_TABLE = "seeninfo";
     private static final String COLUMN_LAST_SEEN = "last_seen";
     private static final String COLUMN_LAST_LOCATION = "last_location";
+    private static final String POWERTOOL_TABLE = "powertools";
+    private static final String COLUMN_MATERIAL = "material";
+    private static final String COLUMN_CMD = "command";
 
     public static void createTable() {
         //"CREATE DATABASE 'essentials'"
@@ -61,6 +66,21 @@ public class DatabaseEditor {
             ps.execute();
             ps.close();
             con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createPowerToolsTable() {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("CREATE TABLE " + POWERTOOL_TABLE +
+                    " (" + COLUMN_UUID + " varchar(36), " +
+                    COLUMN_MATERIAL + " varchar(255), " +
+                    COLUMN_CMD + "varchar(255));");
+            ps.execute();
+            ps.close();
+            con.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,6 +128,24 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             if (con == null) Logger.warning("con is null");
             PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + SEEN_TABLE + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                exists = true;
+            }
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+    public static boolean checkIfPowerToolsTableExists() {
+        boolean exists = false;
+        //TODO: check and create database & table code?
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            if (con == null) Logger.warning("con is null");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + POWERTOOL_TABLE + "' LIMIT 1;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 exists = true;
@@ -292,6 +330,52 @@ public class DatabaseEditor {
             PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
                     COLUMN_LAST_LOCATION + ") VALUES ('" + uuid.toString() + "', '" + location + "') ON DUPLICATE KEY UPDATE " +
                     COLUMN_LAST_LOCATION+ " = '" + location + "';");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<Material, String> getPowerTools(UUID uuid) {
+        Map<Material, String> powertools = new HashMap<>();
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT (" + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "';");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Material material = Material.getMaterial(rs.getString(COLUMN_MATERIAL));
+                String cmd = rs.getString(COLUMN_CMD);
+                powertools.put(material, cmd);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return powertools;
+    }
+
+    public static void removePowerTool(UUID uuid, Material material) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("DELETE FROM " + POWERTOOL_TABLE + " WHERE uuid = '" + uuid.toString() + "' AND " + COLUMN_MATERIAL + " = '" + material.name() + "';"
+            );
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void savePowerTools(UUID uuid) {
+        Map<Material, String> powertools = PowerToolManager.getPowerTools(Bukkit.getPlayer(uuid));
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            //TODO: saving
+            for (Material material : powertools.keySet()) {
+
+            }
+            PreparedStatement ps = con.prepareStatement("INSERT INTO " + POWERTOOL_TABLE +
+                    " (" + COLUMN_UUID + ", " + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") VALUES ('" + uuid.toString() + "', '" + nick + "') ON DUPLICATE KEY UPDATE nickname = '" + nick + "';"
+            );
             ps.execute();
             ps.close();
             con.close();
