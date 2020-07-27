@@ -1,46 +1,23 @@
 package com.westosia.essentials.bukkit.virtualappliances;
 
-import com.westosia.essentials.bukkit.Main;
-import com.westosia.westosiaapi.utils.Logger;
 import org.bukkit.block.Furnace;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.UUID;
 
-public class VirtualFurnace {
-
-    private UUID owner;
-    private Furnace furnace;
+public class VirtualFurnace extends VirtualAppliance {
 
     public VirtualFurnace(UUID owner, Furnace furnace) {
-        this.owner = owner;
-        this.furnace = furnace;
-    }
-
-    public UUID getOwner() {
-        return owner;
+        super(owner, furnace);
     }
 
     public Furnace getFurnace() {
-        return furnace;
-    }
-
-    public void open(Player player) {
-        player.openInventory(getFurnace().getInventory());
-    }
-
-    public void setForceLoadChunk(boolean forceLoad) {
-        if (forceLoad) {
-            furnace.getChunk().addPluginChunkTicket(Main.getInstance());
-        } else {
-            furnace.getChunk().removePluginChunkTicket(Main.getInstance());
-        }
+        return (Furnace) getContainer();
     }
 
     public static VirtualFurnace getFurnace(Furnace furnace) {
-        Collection<PlayerAppliances> appliances = PlayerAppliances.getAllAppliances();
-        for (PlayerAppliances applianceSet : appliances) {
+        Collection<ApplianceManager> appliances = ApplianceManager.getAllAppliances();
+        for (ApplianceManager applianceSet : appliances) {
             VirtualFurnace vurnace = applianceSet.getFurnace();
             if (vurnace != null && furnace.equals(vurnace.getFurnace())) {
                 return vurnace;

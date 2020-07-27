@@ -13,10 +13,11 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.FurnaceInventory;
 
 public class FurnaceSmeltListener implements Listener {
-
+    //TODO: make furnaces unload chunks whenever they finish smelting
+/*
     @EventHandler
     public void onSmelt(FurnaceSmeltEvent event) {
-        Furnace furnace = (Furnace) event.getBlock();
+        Furnace furnace = (Furnace) event.getBlock().getState();
         FurnaceInventory inv = furnace.getInventory();
         if (inv.getSmelting() == null || inv.getSmelting().getType() == Material.AIR) {
             VirtualFurnace vurnace = VirtualFurnace.getFurnace(furnace);
@@ -25,7 +26,7 @@ public class FurnaceSmeltListener implements Listener {
                 vurnace.setForceLoadChunk(false);
             }
         }
-    }
+    }*/
 /*
     @EventHandler
     public void onBurn(FurnaceBurnEvent event) {

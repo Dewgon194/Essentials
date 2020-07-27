@@ -5,14 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerAppliances {
+public class ApplianceManager {
 
     private UUID uuid;
     private VirtualFurnace furnace;
+    private VirtualBrewingStand brewingStand;
 
-    private static Map<UUID, PlayerAppliances> appliances;
+    private static Map<UUID, ApplianceManager> appliances;
 
-    public PlayerAppliances(UUID uuid) {
+    public ApplianceManager(UUID uuid) {
         this.uuid = uuid;
         appliances.put(uuid, this);
     }
@@ -21,23 +22,31 @@ public class PlayerAppliances {
         return furnace;
     }
 
+    public VirtualBrewingStand getBrewingStand() {
+        return brewingStand;
+    }
+
     public void setFurnace(VirtualFurnace furnace) {
         this.furnace = furnace;
+    }
+
+    public void setBrewingStand(VirtualBrewingStand brewingStand) {
+        this.brewingStand = brewingStand;
     }
 
     public static void load() {
         appliances = new HashMap<>();
     }
 
-    public static PlayerAppliances getAppliances(UUID uuid) {
-        PlayerAppliances pa = appliances.get(uuid);
+    public static ApplianceManager getAppliances(UUID uuid) {
+        ApplianceManager pa = appliances.get(uuid);
         if (pa == null) {
-            pa = new PlayerAppliances(uuid);
+            pa = new ApplianceManager(uuid);
         }
         return pa;
     }
 
-    public static Collection<PlayerAppliances> getAllAppliances() {
+    public static Collection<ApplianceManager> getAllAppliances() {
         return appliances.values();
     }
 }

@@ -12,7 +12,7 @@ import com.westosia.essentials.bukkit.listeners.FurnaceSmeltListener;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
-import com.westosia.essentials.bukkit.virtualappliances.PlayerAppliances;
+import com.westosia.essentials.bukkit.virtualappliances.ApplianceManager;
 import com.westosia.essentials.bukkit.virtualappliances.commands.AnvilCmd;
 import com.westosia.essentials.bukkit.virtualappliances.commands.BrewCmd;
 import com.westosia.essentials.bukkit.virtualappliances.commands.FurnaceCmd;
@@ -110,7 +110,7 @@ public class Main extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginMessageReceiver());
         queryServerName();
 
-        PlayerAppliances.load();
+        ApplianceManager.load();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
     }
