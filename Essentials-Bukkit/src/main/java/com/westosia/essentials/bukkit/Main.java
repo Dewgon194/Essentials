@@ -8,11 +8,11 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeAdventureCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeCreativeCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSpectatorCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
+import com.westosia.essentials.bukkit.listeners.FurnaceSmeltListener;
 import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
 import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
 import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
 import com.westosia.essentials.bukkit.virtualappliances.PlayerAppliances;
-import com.westosia.essentials.bukkit.virtualappliances.TickerTask;
 import com.westosia.essentials.bukkit.virtualappliances.commands.AnvilCmd;
 import com.westosia.essentials.bukkit.virtualappliances.commands.BrewCmd;
 import com.westosia.essentials.bukkit.virtualappliances.commands.FurnaceCmd;
@@ -49,7 +49,6 @@ public class Main extends JavaPlugin {
     public Location FIRST_SPAWN_LOC;
     public Location SPAWN_LOC;
     public String SERVER_NAME = "";
-    private int tickerID;
     private static Main instance;
 
     public void onEnable() {
@@ -74,7 +73,8 @@ public class Main extends JavaPlugin {
 
         registerEvents(
                 new PlayerLeaveListener(),
-                new PlayerJoinListener()
+                new PlayerJoinListener(),
+                new FurnaceSmeltListener()
                 );
 
         registerCommands(
@@ -111,13 +111,11 @@ public class Main extends JavaPlugin {
         queryServerName();
 
         PlayerAppliances.load();
-        tickerID = new TickerTask().getTaskId();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
     }
 
     public void onDisable() {
-        Bukkit.getScheduler().cancelTask(tickerID);
         getConfig().set("spawn-location", LocationStrings.toString(SPAWN_LOC));
         getConfig().set("first-spawn", LocationStrings.toString(FIRST_SPAWN_LOC));
         saveConfig();

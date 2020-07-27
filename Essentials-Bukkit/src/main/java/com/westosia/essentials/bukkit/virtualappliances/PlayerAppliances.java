@@ -1,11 +1,5 @@
 package com.westosia.essentials.bukkit.virtualappliances;
 
-import net.minecraft.server.v1_15_R1.Containers;
-import net.minecraft.server.v1_15_R1.EntityPlayer;
-import net.minecraft.server.v1_15_R1.PacketPlayOutOpenWindow;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,18 +21,8 @@ public class PlayerAppliances {
         return furnace;
     }
 
-    public void openFurnace() {
-        EntityPlayer nmsPlayer = ((CraftPlayer) (Bukkit.getPlayer(uuid))).getHandle();
-        if (furnace == null) {
-            furnace = new VirtualFurnace(nmsPlayer);
-        }
-        nmsPlayer.openContainer(furnace);
-        // Something NMS needs to keep track of invs
-        //int id = nmsPlayer.nextContainerCounter();
-        // Create and send anvil packet
-        //PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(id, Containers.FURNACE, furnace.getContainerName());
-        //nmsPlayer.playerConnection.sendPacket(packet);
-        //nmsPlayer.activeContainer;
+    public void setFurnace(VirtualFurnace furnace) {
+        this.furnace = furnace;
     }
 
     public static void load() {
@@ -46,7 +30,11 @@ public class PlayerAppliances {
     }
 
     public static PlayerAppliances getAppliances(UUID uuid) {
-        return appliances.getOrDefault(uuid, new PlayerAppliances(uuid));
+        PlayerAppliances pa = appliances.get(uuid);
+        if (pa == null) {
+            pa = new PlayerAppliances(uuid);
+        }
+        return pa;
     }
 
     public static Collection<PlayerAppliances> getAllAppliances() {
