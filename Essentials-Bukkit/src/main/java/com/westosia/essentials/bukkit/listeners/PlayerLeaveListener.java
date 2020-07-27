@@ -1,8 +1,12 @@
 package com.westosia.essentials.bukkit.listeners;
 
 import com.westosia.essentials.bukkit.Main;
+import com.westosia.essentials.utils.DatabaseEditor;
+import com.westosia.essentials.utils.LocationStrings;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -24,5 +28,7 @@ public class PlayerLeaveListener implements Listener {
             ServerChange serverChange = new ServerChange(uuid, ServerChange.Reason.VOLUNTARY, Main.getInstance().SERVER_NAME);
             RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
         }
+        Location lastLoc = event.getPlayer().getLocation();
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> DatabaseEditor.setLastLocation(uuid, LocationStrings.friendlyLoc(lastLoc, true)));
     }
 }

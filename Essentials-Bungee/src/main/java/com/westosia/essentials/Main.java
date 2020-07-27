@@ -30,7 +30,8 @@ public class Main extends Plugin {
                             new TpDenyCmd(),
                             new TpCancelCmd(),
                             new TpHereCmd(),
-                            new TpposCmd());
+                            new TpposCmd(),
+                            new SeenCmd());
 
         registerListeners(  new PostLoginListener(),
                             new PlayerDisconnectListener());

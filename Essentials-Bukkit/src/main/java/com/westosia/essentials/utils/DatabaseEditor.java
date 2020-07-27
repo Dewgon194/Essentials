@@ -20,7 +20,9 @@ public class DatabaseEditor {
     private static final String COLUMN_HOME_STRING = "home_string";
     private static final String NICKNAME_TABLE = "nicknames";
     private static final String COLUMN_NICKNAME = "nickname";
-
+    private static final String SEEN_TABLE = "seeninfo";
+    private static final String COLUMN_LAST_SEEN = "last_seen";
+    private static final String COLUMN_LAST_LOCATION = "last_location";
 
     public static void createTable() {
         //"CREATE DATABASE 'essentials'"
@@ -46,6 +48,19 @@ public class DatabaseEditor {
             ps.close();
             con.close();
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createSeenTable() {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("CREATE TABLE " + SEEN_TABLE +
+                    " (" + COLUMN_UUID + " varchar(36), " +
+                    COLUMN_LAST_SEEN + " bigint(255), " + COLUMN_LAST_LOCATION + " varchar(255), UNIQUE INDEX `uuid` (`uuid`) USING BTREE);");
+            ps.execute();
+            ps.close();
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -87,6 +102,23 @@ public class DatabaseEditor {
         return exists;
     }
 
+    public static boolean checkIfSeenTableExists() {
+        boolean exists = false;
+        //TODO: check and create database & table code?
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            if (con == null) Logger.warning("con is null");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + SEEN_TABLE + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                exists = true;
+            }
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
 
     public static Map<String, Home> getHomesInDB(UUID uuid) {
         Map<String, Home> homesInDB = new HashMap<>();
@@ -202,6 +234,64 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("DELETE FROM nicknames WHERE uuid = '" + uuid.toString() + "';"
             );
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static long getLastSeen(UUID uuid) {
+        long time = 0;
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_LAST_SEEN + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;"
+            );
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                time = rs.getLong(COLUMN_LAST_SEEN);
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+    public static void setLastSeen(UUID uuid, long time) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
+                    COLUMN_LAST_SEEN+ ") VALUES ('" + uuid.toString() + "', " + time + ") ON DUPLICATE KEY UPDATE " +
+                    COLUMN_LAST_SEEN + " = " + time + ";");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getLastLocation(UUID uuid) {
+        String loc = "";
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_LAST_LOCATION + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                loc = rs.getString(COLUMN_LAST_LOCATION);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return loc;
+    }
+
+    public static void setLastLocation(UUID uuid, String location) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
+                    COLUMN_LAST_LOCATION + ") VALUES ('" + uuid.toString() + "', '" + location + "') ON DUPLICATE KEY UPDATE " +
+                    COLUMN_LAST_LOCATION+ " = '" + location + "';");
             ps.execute();
             ps.close();
             con.close();

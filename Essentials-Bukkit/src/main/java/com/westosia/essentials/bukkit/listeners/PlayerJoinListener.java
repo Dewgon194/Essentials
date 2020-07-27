@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -98,6 +99,8 @@ public class PlayerJoinListener implements Listener {
                         } else {
                             RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.SET_HOME, uuid.toString());
                         }
+                        // Update last seen to current time
+                        DatabaseEditor.setLastSeen(uuid, Instant.now().getEpochSecond());
                     });
                 }
             }

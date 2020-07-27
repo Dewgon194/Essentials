@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class ChangeServerListener implements RedisChannelListener {
@@ -62,6 +63,8 @@ public class ChangeServerListener implements RedisChannelListener {
                                     // Player is on this server (failed server change). Just uncache
                                     RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.getWhosChanging().toString());
                                 }
+                                // Save last seen time
+                                DatabaseEditor.setLastSeen(serverChange.getWhosChanging(), Instant.now().getEpochSecond() - 5);
                             }
                         }, 100);
                     }
