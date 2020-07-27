@@ -80,7 +80,6 @@ public class PluginMessageReceiver implements PluginMessageListener {
                             Bukkit.getServer().sendPluginMessage(Main.getInstance(), "BungeeCord", output.toByteArray());
                         }
                     });
-                    //Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> WestosiaAPI.getNotifier().sendChatMessage(Bukkit.getPlayer(senderName), Notifier.NotifyStatus.SUCCESS, "Online for &e" + getFriendlyDuration(timeSince) + "&a, at " + location));
                 });
             }
         }
