@@ -8,10 +8,7 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeAdventureCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeCreativeCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSpectatorCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
-import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
-import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
-import com.westosia.essentials.bukkit.listeners.PlayerTeleportListener;
-import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
+import com.westosia.essentials.bukkit.listeners.*;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.homes.back.BackCmd;
@@ -71,8 +68,9 @@ public class Main extends JavaPlugin {
         registerEvents(
                 new PlayerLeaveListener(),
                 new PlayerJoinListener(),
-                new PlayerTeleportListener()
-                );
+                new PlayerTeleportListener(),
+                new AccessoryListener()
+        );
 
         registerCommands(
                 new HealPlayerCmd(),
@@ -103,8 +101,8 @@ public class Main extends JavaPlugin {
         );
 
         // register bungee plugin channel
-        getServer().getMessenger().registerOutgoingPluginChannel( this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginMessageReceiver());
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessageReceiver());
         queryServerName();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
