@@ -1,11 +1,11 @@
 package com.westosia.essentials.bukkit.listeners;
 
 import com.westosia.westosiaapi.WestosiaAPI;
+import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -18,7 +18,7 @@ public class AccessoryListener implements Listener {
             .build();
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
+    public void onSync(SyncCompleteEvent e) {
         Inventory inv = e.getPlayer().getInventory();
         // bodged for now
         for (int i = 9; i <= 13; i++) {
