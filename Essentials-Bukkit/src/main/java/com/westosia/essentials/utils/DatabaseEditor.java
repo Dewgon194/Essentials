@@ -76,7 +76,7 @@ public class DatabaseEditor {
             PreparedStatement ps = con.prepareStatement("CREATE TABLE " + POWERTOOL_TABLE +
                     " (" + COLUMN_UUID + " varchar(36), " +
                     COLUMN_MATERIAL + " varchar(255), " +
-                    COLUMN_CMD + "varchar(255));");
+                    COLUMN_CMD + " varchar(255));");
             ps.execute();
             ps.close();
             con.close();
@@ -341,7 +341,7 @@ public class DatabaseEditor {
     public static Map<Material, String> getPowerTools(UUID uuid) {
         Map<Material, String> powertools = new HashMap<>();
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
-            PreparedStatement ps = con.prepareStatement("SELECT (" + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "';");
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_MATERIAL + ", " + COLUMN_CMD + " FROM " + POWERTOOL_TABLE + " WHERE uuid = '" + uuid.toString() + "';");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Material material = Material.getMaterial(rs.getString(COLUMN_MATERIAL));
@@ -366,16 +366,14 @@ public class DatabaseEditor {
         }
     }
 
-    public static void savePowerTools(UUID uuid) {
-        Map<Material, String> powertools = PowerToolManager.getPowerTools(Bukkit.getPlayer(uuid));
+    public static void savePowerTool(UUID uuid, Material material, String cmd, boolean updateExisting) {
+        String sql = "INSERT INTO " + POWERTOOL_TABLE +
+                " (" + COLUMN_UUID + ", " + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") VALUES ('" + uuid.toString() + "', '" + material.name() + "', '" + cmd + "');";
+        if (updateExisting) {
+            sql = "UPDATE " + POWERTOOL_TABLE + " SET " + COLUMN_CMD + " = '" + cmd + "' WHERE " + COLUMN_UUID + " = '" + uuid.toString() + "' AND " + COLUMN_MATERIAL + " = '" + material.name() + "';";
+        }
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
-            //TODO: saving
-            for (Material material : powertools.keySet()) {
-
-            }
-            PreparedStatement ps = con.prepareStatement("INSERT INTO " + POWERTOOL_TABLE +
-                    " (" + COLUMN_UUID + ", " + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") VALUES ('" + uuid.toString() + "', '" + nick + "') ON DUPLICATE KEY UPDATE nickname = '" + nick + "';"
-            );
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.execute();
             ps.close();
             con.close();

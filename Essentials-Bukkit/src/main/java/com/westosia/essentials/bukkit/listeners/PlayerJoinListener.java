@@ -5,11 +5,13 @@ import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.essentials.homes.back.BackManager;
 import com.westosia.essentials.utils.DatabaseEditor;
+import com.westosia.essentials.utils.PowerToolManager;
 import com.westosia.essentials.utils.RedisAnnouncer;
 import com.westosia.essentials.utils.ServerChange;
 import com.westosia.westosiaapi.WestosiaAPI;
 import com.westosia.westosiaapi.api.Notifier;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerJoinListener implements Listener {
@@ -105,11 +108,15 @@ public class PlayerJoinListener implements Listener {
                 }
             }
         }, 12);
+        // Database calls on join
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
             String nickName = DatabaseEditor.getNick(uuid);
             if (!nickName.equals("")) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> player.setDisplayName(nickName));
             }
+
+            Map<Material, String> powertools = DatabaseEditor.getPowerTools(uuid);
+            PowerToolManager.cacheAll(uuid, powertools);
         });
 
     }

@@ -39,6 +39,10 @@ public class PowerToolManager {
         powertools.put(uuid, tools);
     }
 
+    public static void cacheAll(UUID uuid, Map<Material, String> powertools) {
+        PowerToolManager.powertools.put(uuid, powertools);
+    }
+
     public static void uncachePowerTool(UUID uuid, Material material) {
         Map<Material, String> tools = powertools.get(uuid);
         if (tools != null) {
