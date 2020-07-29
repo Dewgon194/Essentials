@@ -70,8 +70,9 @@ public class Main extends JavaPlugin {
                 new PlayerLeaveListener(),
                 new PlayerJoinListener(),
                 new PlayerTeleportListener(),
-                new PlayerInteractListener()
-                );
+                new PlayerInteractListener(),
+                new AccessoryListener()
+        );
 
         registerCommands(
                 new HealPlayerCmd(),
@@ -103,8 +104,8 @@ public class Main extends JavaPlugin {
         );
 
         // register bungee plugin channel
-        getServer().getMessenger().registerOutgoingPluginChannel( this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginMessageReceiver());
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessageReceiver());
         queryServerName();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
