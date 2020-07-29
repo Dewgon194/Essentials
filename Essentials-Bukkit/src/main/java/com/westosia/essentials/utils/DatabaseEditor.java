@@ -206,15 +206,20 @@ public class DatabaseEditor {
     public static void saveHome(Home home, boolean newEntry) {
         UUID uuid = home.getOwner().getUniqueId();
         String sql = "UPDATE " + HOMES_TABLE +
-                " SET " + COLUMN_HOME_STRING + " = '" + home.toString() +
-                "' WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
-                "' AND " + COLUMN_HOME_NAME + " = '" + home.getName() + "';";
+                " SET " + COLUMN_HOME_STRING + " = ? WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
+                "' AND " + COLUMN_HOME_NAME + " = ?;";
         if (newEntry) {
-            sql = "INSERT INTO " + HOMES_TABLE + " VALUES ('" + uuid.toString() + "', '" +
-                    home.getName() + "', '" + home.toString() + "');";
+            sql = "INSERT INTO " + HOMES_TABLE + " VALUES ('" + uuid.toString() + "', ?, ?);";
         }
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement(sql);
+            if (newEntry) {
+                ps.setString(1, home.getName());
+                ps.setString(2, home.toString());
+            } else {
+                ps.setString(1, home.toString());
+                ps.setString(2, home.getName());
+            }
             ps.execute();
             ps.close();
             con.close();
@@ -228,7 +233,8 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("DELETE FROM " + HOMES_TABLE +
                     " WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
-                    "' AND " + COLUMN_HOME_NAME + " = '" + home.getName() + "';");
+                    "' AND " + COLUMN_HOME_NAME + " = ?;");
+            ps.setString(1, home.getName());
             ps.execute();
             ps.close();
             con.close();
@@ -239,8 +245,11 @@ public class DatabaseEditor {
 
     public static void saveNick(String nick, UUID uuid) {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
-            PreparedStatement ps = con.prepareStatement("INSERT INTO nicknames (uuid, nickname) VALUES ('" + uuid.toString() + "', '" + nick + "') ON DUPLICATE KEY UPDATE nickname = '" + nick + "';"
+            PreparedStatement ps = con.prepareStatement("INSERT INTO nicknames (uuid, nickname) VALUES ('" + uuid.toString() + "', ?) ON DUPLICATE KEY UPDATE nickname = ?;"
             );
+            for (int i = 1; i < 3; i++) {
+                ps.setString(i, nick);
+            }
             ps.execute();
             ps.close();
             con.close();
@@ -368,12 +377,13 @@ public class DatabaseEditor {
 
     public static void savePowerTool(UUID uuid, Material material, String cmd, boolean updateExisting) {
         String sql = "INSERT INTO " + POWERTOOL_TABLE +
-                " (" + COLUMN_UUID + ", " + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") VALUES ('" + uuid.toString() + "', '" + material.name() + "', '" + cmd + "');";
+                " (" + COLUMN_UUID + ", " + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") VALUES ('" + uuid.toString() + "', '" + material.name() + "', ?);";
         if (updateExisting) {
-            sql = "UPDATE " + POWERTOOL_TABLE + " SET " + COLUMN_CMD + " = '" + cmd + "' WHERE " + COLUMN_UUID + " = '" + uuid.toString() + "' AND " + COLUMN_MATERIAL + " = '" + material.name() + "';";
+            sql = "UPDATE " + POWERTOOL_TABLE + " SET " + COLUMN_CMD + " = ? WHERE " + COLUMN_UUID + " = '" + uuid.toString() + "' AND " + COLUMN_MATERIAL + " = '" + material.name() + "';";
         }
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, cmd);
             ps.execute();
             ps.close();
             con.close();
