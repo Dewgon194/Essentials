@@ -1,5 +1,7 @@
 package com.westosia.essentials.bukkit.listeners;
 
+import com.westosia.cooldownapi.storage.Cooldown;
+import com.westosia.cooldownapi.storage.CooldownDB;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
@@ -117,6 +119,9 @@ public class PlayerJoinListener implements Listener {
 
             Map<Material, String> powertools = DatabaseEditor.getPowerTools(uuid);
             PowerToolManager.cacheAll(uuid, powertools);
+
+            Map<String, Cooldown> cooldowns = CooldownDB.getInstance().getCooldowns(uuid);
+            Cooldown.cacheAll(uuid, cooldowns);
         });
 
     }

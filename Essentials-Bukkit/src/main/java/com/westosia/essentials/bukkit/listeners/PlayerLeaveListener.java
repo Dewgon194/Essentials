@@ -1,5 +1,6 @@
 package com.westosia.essentials.bukkit.listeners;
 
+import com.westosia.cooldownapi.storage.Cooldown;
 import com.westosia.essentials.bukkit.Main;
 import com.westosia.essentials.utils.*;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ public class PlayerLeaveListener implements Listener {
             RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.CHANGE_SERVER, serverChange.toString());
         }
         PowerToolManager.uncacheAll(uuid);
+        Cooldown.uncacheAll(uuid);
         Location lastLoc = event.getPlayer().getLocation();
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> DatabaseEditor.setLastLocation(uuid, LocationStrings.friendlyLoc(lastLoc, true)));
     }
