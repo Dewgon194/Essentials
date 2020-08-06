@@ -61,6 +61,12 @@
             <artifactId>WestosiaAPI</artifactId>
             <version>1.2.0</version>
         </dependency>
+        <!-- CooldownAPI -->
+        <dependency>
+            <groupId>com.westosia</groupId>
+            <artifactId>CooldownAPI</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!-- ACF Paper (Commands) -->
         <dependency>
             <groupId>co.aikar</groupId>
@@ -72,14 +78,6 @@
             <groupId>com.github.MyzelYam</groupId>
             <artifactId>PremiumVanishAPI</artifactId>
             <version>2.0.3</version>
-        </dependency>
-        <!-- CooldownAPI -->
-        <dependency>
-            <artifactId>...</artifactId>
-            <groupId>...</groupId>
-            <version>...</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/birma/Documents/Local Dependencies/CooldownAPI.jar</systemPath>
         </dependency>
     </dependencies>
 
