@@ -97,6 +97,7 @@ public class DatabaseEditor {
                 exists = true;
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,6 +116,7 @@ public class DatabaseEditor {
                 exists = true;
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,6 +135,7 @@ public class DatabaseEditor {
                 exists = true;
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -151,6 +154,7 @@ public class DatabaseEditor {
                 exists = true;
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -171,6 +175,7 @@ public class DatabaseEditor {
                 homesInDB.put(homeName, HomeManager.fromString(homeString));
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -328,6 +333,9 @@ public class DatabaseEditor {
             while (rs.next()) {
                 loc = rs.getString(COLUMN_LAST_LOCATION);
             }
+            rs.close();
+            ps.close();
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -357,6 +365,9 @@ public class DatabaseEditor {
                 String cmd = rs.getString(COLUMN_CMD);
                 powertools.put(material, cmd);
             }
+            rs.close();
+            ps.close();
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
