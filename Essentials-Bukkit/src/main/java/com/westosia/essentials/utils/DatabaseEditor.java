@@ -441,7 +441,7 @@ public class DatabaseEditor {
 
     public static void setGodmode(UUID uuid, int godbool){
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
-            PreparedStatement ps = con.prepareStatement("INSERT INTO godmode (uuid) VALUES ('" + uuid.toString() + "', 1);"
+            PreparedStatement ps = con.prepareStatement("INSERT INTO godmode (uuid, godenabled) VALUES ('" + uuid.toString() + "', 1);"
             );
             ps.execute();
             ps.close();

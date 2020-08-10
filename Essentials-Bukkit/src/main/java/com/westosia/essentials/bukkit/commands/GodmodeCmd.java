@@ -48,9 +48,9 @@ public class GodmodeCmd extends BaseCommand {
                     WestosiaAPI.getNotifier().sendChatMessage(player2, Notifier.NotifyStatus.ERROR, "Godmode is now disabled");
                     RedisAnnouncer.tellRedis(RedisAnnouncer.Channel.GODMODE, player2.getName() + "|" + "off");
 
-                } else {
-                    WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Specified player is not online or does not exist!");
                 }
+            }else {
+                WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Specified player is not online or does not exist!");
             }
         } else if (args.length > 1) {
             WestosiaAPI.getNotifier().sendChatMessage(player, Notifier.NotifyStatus.ERROR, "Too many arguments!");
