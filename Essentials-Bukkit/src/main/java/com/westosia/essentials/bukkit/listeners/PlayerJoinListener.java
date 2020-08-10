@@ -129,6 +129,7 @@ public class PlayerJoinListener implements Listener {
             int god = DatabaseEditor.getGodmode(player.getUniqueId());
             if (god == 1){
                 player.setMetadata("GodmodeOn", new FixedMetadataValue(Main.getInstance(), "godmode"));
+                DatabaseEditor.removeGodmode(player.getUniqueId());
             }
         }
 
