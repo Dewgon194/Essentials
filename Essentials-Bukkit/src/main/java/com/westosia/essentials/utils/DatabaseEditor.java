@@ -4,14 +4,15 @@ import com.westosia.databaseapi.database.DatabaseConnector;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.westosiaapi.utils.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class DatabaseEditor {
 
@@ -28,6 +29,8 @@ public class DatabaseEditor {
     private static final String POWERTOOL_TABLE = "powertools";
     private static final String COLUMN_MATERIAL = "material";
     private static final String COLUMN_CMD = "command";
+    private static final String GODMODE_TABLE = "godmode";
+    private static final String COLUMN_GODMODE = "godenabled";
 
     public static void createTable() {
         //"CREATE DATABASE 'essentials'"
@@ -83,6 +86,19 @@ public class DatabaseEditor {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void createGodmodeTable(){
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)){
+            PreparedStatement ps = con.prepareStatement("CREATE TABLE " + GODMODE_TABLE +
+                    " (" + COLUMN_UUID + " varchar(36), " +
+                    COLUMN_GODMODE + " tinyint(1));");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e){
+            e.printStackTrace();;
         }
     }
 
@@ -161,6 +177,26 @@ public class DatabaseEditor {
         }
         return exists;
     }
+
+    public static boolean checkIfGodmodeTableExists() {
+        boolean exists = false;
+        //TODO: check and create database & table code?
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            if (con == null) Logger.warning("con is null");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + GODMODE_TABLE + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                exists = true;
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
 
     public static Map<String, Home> getHomesInDB(UUID uuid) {
         Map<String, Home> homesInDB = new HashMap<>();
@@ -395,6 +431,46 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, cmd);
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setGodmode(UUID uuid, int godbool){
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO godmode (uuid) VALUES ('" + uuid.toString() + "', 1);"
+            );
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static int getGodmode(UUID uuid) {
+        int godbool = 0;
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT godenabled FROM godmode WHERE uuid = '" + uuid.toString() + "' LIMIT 1;"
+            );
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                godbool = rs.getInt(COLUMN_GODMODE);
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return godbool;
+    }
+    public static void removeGodmode(UUID uuid) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("DELETE FROM godmode WHERE uuid = '" + uuid.toString() + "';"
+            );
             ps.execute();
             ps.close();
             con.close();

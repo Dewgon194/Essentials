@@ -52,6 +52,7 @@ public class Main extends JavaPlugin {
         checkNickDB();
         checkSeenDB();
         checkPowerToolsDB();
+        checkGodmodeDB();
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         // If people are on when enabled, load them in from db to prevent yeeting of homes on reload
         // This really shouldn't be done live anyways. Repeated reloads produces odd behaviour from the Redis listeners
@@ -66,12 +67,14 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SUDO.getChannel(), new SudoListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.NICKNAME.getChannel(), new NicknameListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SET_BACKHOME.getChannel(), new SetBackhomeListener());
+        RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.GODMODE.getChannel(), new GodmodeListener());
         registerEvents(
                 new PlayerLeaveListener(),
                 new PlayerJoinListener(),
                 new PlayerTeleportListener(),
                 new PlayerInteractListener(),
-                new AccessoryListener()
+                new AccessoryListener(),
+                new PlayerDamageListener()
         );
 
         registerCommands(
@@ -100,7 +103,8 @@ public class Main extends JavaPlugin {
                 new InvseeCmd(),
                 new SudoCmd(),
                 new BackCmd(),
-                new PowerToolCmd()
+                new PowerToolCmd(),
+                new GodmodeCmd()
         );
 
         // register bungee plugin channel
@@ -184,6 +188,15 @@ public class Main extends JavaPlugin {
             boolean exists = DatabaseEditor.checkIfPowerToolsTableExists();
             if (!exists) {
                 DatabaseEditor.createPowerToolsTable();
+            }
+        });
+    }
+
+    private void checkGodmodeDB() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            boolean exists = DatabaseEditor.checkIfGodmodeTableExists();
+            if (!exists) {
+                DatabaseEditor.createGodmodeTable();
             }
         });
     }

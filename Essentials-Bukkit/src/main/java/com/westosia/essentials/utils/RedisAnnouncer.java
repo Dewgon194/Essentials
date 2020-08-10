@@ -12,7 +12,7 @@ public class RedisAnnouncer {
 
     public enum Channel {
 
-        SET_HOME("sethome"), DEL_HOME("delhome"), CHANGE_SERVER("changeserver"), QUERY_HOMES("queryhomes"), SET_BACKHOME("backhomes"), SUDO("sudo"), NICKNAME("nickname");
+        SET_HOME("sethome"), DEL_HOME("delhome"), CHANGE_SERVER("changeserver"), QUERY_HOMES("queryhomes"), SET_BACKHOME("backhomes"), SUDO("sudo"), NICKNAME("nickname"), GODMODE("godmode");
 
         private final String channel;
 

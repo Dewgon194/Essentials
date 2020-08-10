@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -124,5 +125,13 @@ public class PlayerJoinListener implements Listener {
             Cooldown.cacheAll(uuid, cooldowns);
         });
 
+        if (!player.hasMetadata("GodmodeOn")){
+            int god = DatabaseEditor.getGodmode(player.getUniqueId());
+            if (god == 1){
+                player.setMetadata("GodmodeOn", new FixedMetadataValue(Main.getInstance(), "godmode"));
+            }
+        }
+
     }
+
 }
