@@ -4,6 +4,8 @@ import com.westosia.databaseapi.database.DatabaseConnector;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
 import com.westosia.westosiaapi.utils.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +22,12 @@ public class DatabaseEditor {
     private static final String COLUMN_HOME_STRING = "home_string";
     private static final String NICKNAME_TABLE = "nicknames";
     private static final String COLUMN_NICKNAME = "nickname";
-
+    private static final String SEEN_TABLE = "seeninfo";
+    private static final String COLUMN_LAST_SEEN = "last_seen";
+    private static final String COLUMN_LAST_LOCATION = "last_location";
+    private static final String POWERTOOL_TABLE = "powertools";
+    private static final String COLUMN_MATERIAL = "material";
+    private static final String COLUMN_CMD = "command";
 
     public static void createTable() {
         //"CREATE DATABASE 'essentials'"
@@ -51,6 +58,34 @@ public class DatabaseEditor {
         }
     }
 
+    public static void createSeenTable() {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("CREATE TABLE " + SEEN_TABLE +
+                    " (" + COLUMN_UUID + " varchar(36), " +
+                    COLUMN_LAST_SEEN + " bigint(255), " + COLUMN_LAST_LOCATION + " varchar(255), UNIQUE INDEX `uuid` (`uuid`) USING BTREE);");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createPowerToolsTable() {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("CREATE TABLE " + POWERTOOL_TABLE +
+                    " (" + COLUMN_UUID + " varchar(36), " +
+                    COLUMN_MATERIAL + " varchar(255), " +
+                    COLUMN_CMD + " varchar(255));");
+            ps.execute();
+            ps.close();
+            con.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static boolean checkIfTableExists() {
         boolean exists = false;
         //TODO: check and create database & table code?
@@ -62,6 +97,7 @@ public class DatabaseEditor {
                 exists = true;
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,6 +116,7 @@ public class DatabaseEditor {
                 exists = true;
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -87,6 +124,43 @@ public class DatabaseEditor {
         return exists;
     }
 
+    public static boolean checkIfSeenTableExists() {
+        boolean exists = false;
+        //TODO: check and create database & table code?
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            if (con == null) Logger.warning("con is null");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + SEEN_TABLE + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                exists = true;
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+    public static boolean checkIfPowerToolsTableExists() {
+        boolean exists = false;
+        //TODO: check and create database & table code?
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            if (con == null) Logger.warning("con is null");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM information_schema.tables WHERE table_schema = '" + DATABASE + "' AND table_name = '" + POWERTOOL_TABLE + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                exists = true;
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
 
     public static Map<String, Home> getHomesInDB(UUID uuid) {
         Map<String, Home> homesInDB = new HashMap<>();
@@ -101,6 +175,7 @@ public class DatabaseEditor {
                 homesInDB.put(homeName, HomeManager.fromString(homeString));
             }
             ps.close();
+            rs.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,15 +211,20 @@ public class DatabaseEditor {
     public static void saveHome(Home home, boolean newEntry) {
         UUID uuid = home.getOwner().getUniqueId();
         String sql = "UPDATE " + HOMES_TABLE +
-                " SET " + COLUMN_HOME_STRING + " = '" + home.toString() +
-                "' WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
-                "' AND " + COLUMN_HOME_NAME + " = '" + home.getName() + "';";
+                " SET " + COLUMN_HOME_STRING + " = ? WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
+                "' AND " + COLUMN_HOME_NAME + " = ?;";
         if (newEntry) {
-            sql = "INSERT INTO " + HOMES_TABLE + " VALUES ('" + uuid.toString() + "', '" +
-                    home.getName() + "', '" + home.toString() + "');";
+            sql = "INSERT INTO " + HOMES_TABLE + " VALUES ('" + uuid.toString() + "', ?, ?);";
         }
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement(sql);
+            if (newEntry) {
+                ps.setString(1, home.getName());
+                ps.setString(2, home.toString());
+            } else {
+                ps.setString(1, home.toString());
+                ps.setString(2, home.getName());
+            }
             ps.execute();
             ps.close();
             con.close();
@@ -158,7 +238,8 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("DELETE FROM " + HOMES_TABLE +
                     " WHERE " + COLUMN_UUID + " = '" + uuid.toString() +
-                    "' AND " + COLUMN_HOME_NAME + " = '" + home.getName() + "';");
+                    "' AND " + COLUMN_HOME_NAME + " = ?;");
+            ps.setString(1, home.getName());
             ps.execute();
             ps.close();
             con.close();
@@ -169,8 +250,11 @@ public class DatabaseEditor {
 
     public static void saveNick(String nick, UUID uuid) {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
-            PreparedStatement ps = con.prepareStatement("INSERT INTO nicknames (uuid, nickname) VALUES ('" + uuid.toString() + "', '" + nick + "') ON DUPLICATE KEY UPDATE nickname = '" + nick + "';"
+            PreparedStatement ps = con.prepareStatement("INSERT INTO nicknames (uuid, nickname) VALUES ('" + uuid.toString() + "', ?) ON DUPLICATE KEY UPDATE nickname = ?;"
             );
+            for (int i = 1; i < 3; i++) {
+                ps.setString(i, nick);
+            }
             ps.execute();
             ps.close();
             con.close();
@@ -202,6 +286,115 @@ public class DatabaseEditor {
         try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
             PreparedStatement ps = con.prepareStatement("DELETE FROM nicknames WHERE uuid = '" + uuid.toString() + "';"
             );
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static long getLastSeen(UUID uuid) {
+        long time = 0;
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_LAST_SEEN + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;"
+            );
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                time = rs.getLong(COLUMN_LAST_SEEN);
+            }
+            ps.close();
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+    public static void setLastSeen(UUID uuid, long time) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
+                    COLUMN_LAST_SEEN+ ") VALUES ('" + uuid.toString() + "', " + time + ") ON DUPLICATE KEY UPDATE " +
+                    COLUMN_LAST_SEEN + " = " + time + ";");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getLastLocation(UUID uuid) {
+        String loc = "";
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_LAST_LOCATION + " FROM " + SEEN_TABLE + " WHERE uuid = '" + uuid.toString() + "' LIMIT 1;");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                loc = rs.getString(COLUMN_LAST_LOCATION);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return loc;
+    }
+
+    public static void setLastLocation(UUID uuid, String location) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO " + SEEN_TABLE + " (" + COLUMN_UUID + "," +
+                    COLUMN_LAST_LOCATION + ") VALUES ('" + uuid.toString() + "', '" + location + "') ON DUPLICATE KEY UPDATE " +
+                    COLUMN_LAST_LOCATION+ " = '" + location + "';");
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<Material, String> getPowerTools(UUID uuid) {
+        Map<Material, String> powertools = new HashMap<>();
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("SELECT " + COLUMN_MATERIAL + ", " + COLUMN_CMD + " FROM " + POWERTOOL_TABLE + " WHERE uuid = '" + uuid.toString() + "';");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Material material = Material.getMaterial(rs.getString(COLUMN_MATERIAL));
+                String cmd = rs.getString(COLUMN_CMD);
+                powertools.put(material, cmd);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return powertools;
+    }
+
+    public static void removePowerTool(UUID uuid, Material material) {
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement("DELETE FROM " + POWERTOOL_TABLE + " WHERE uuid = '" + uuid.toString() + "' AND " + COLUMN_MATERIAL + " = '" + material.name() + "';"
+            );
+            ps.execute();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void savePowerTool(UUID uuid, Material material, String cmd, boolean updateExisting) {
+        String sql = "INSERT INTO " + POWERTOOL_TABLE +
+                " (" + COLUMN_UUID + ", " + COLUMN_MATERIAL + ", " + COLUMN_CMD + ") VALUES ('" + uuid.toString() + "', '" + material.name() + "', ?);";
+        if (updateExisting) {
+            sql = "UPDATE " + POWERTOOL_TABLE + " SET " + COLUMN_CMD + " = ? WHERE " + COLUMN_UUID + " = '" + uuid.toString() + "' AND " + COLUMN_MATERIAL + " = '" + material.name() + "';";
+        }
+        try (Connection con = DatabaseConnector.getConnection(DATABASE)) {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, cmd);
             ps.execute();
             ps.close();
             con.close();

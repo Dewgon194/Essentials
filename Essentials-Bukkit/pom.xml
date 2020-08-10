@@ -61,6 +61,12 @@
             <artifactId>WestosiaAPI</artifactId>
             <version>1.2.0</version>
         </dependency>
+        <!-- CooldownAPI -->
+        <dependency>
+            <groupId>com.westosia</groupId>
+            <artifactId>CooldownAPI</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!-- ACF Paper (Commands) -->
         <dependency>
             <groupId>co.aikar</groupId>

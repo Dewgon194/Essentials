@@ -23,17 +23,22 @@ public class Main extends Plugin {
 
         LUCK_PERMS = LuckPermsProvider.get();
 
-        registerCommands(   new TeleportCmd(),
-                            new TpaCmd(),
-                            new TpaHereCmd(),
-                            new TpAcceptCmd(),
-                            new TpDenyCmd(),
-                            new TpCancelCmd(),
-                            new TpHereCmd(),
-                            new TpposCmd());
+        registerCommands(
+                new TeleportCmd(),
+                new TpaCmd(),
+                new TpaHereCmd(),
+                new TpAcceptCmd(),
+                new TpDenyCmd(),
+                new TpCancelCmd(),
+                new TpHereCmd(),
+                new TpposCmd(),
+                new SeenCmd()
+        );
 
-        registerListeners(  new PostLoginListener(),
-                            new PlayerDisconnectListener());
+        registerListeners(
+                new PostLoginListener(),
+                new PlayerDisconnectListener()
+        );
     }
 
     private void registerCommands(BaseCommand... commands) {
@@ -50,6 +55,7 @@ public class Main extends Plugin {
             manager.registerListener(this, listener);
         }
     }
+
     public static Main getInstance() {
         return instance;
     }

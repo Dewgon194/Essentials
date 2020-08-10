@@ -8,11 +8,10 @@ import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeAdventureCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeCreativeCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSpectatorCmd;
 import com.westosia.essentials.bukkit.commands.gamemodes.GamemodeSurvivalCmd;
-import com.westosia.essentials.bukkit.listeners.PlayerJoinListener;
-import com.westosia.essentials.bukkit.listeners.PlayerLeaveListener;
-import com.westosia.essentials.bukkit.listeners.PluginMessageReceiver;
+import com.westosia.essentials.bukkit.listeners.*;
 import com.westosia.essentials.homes.Home;
 import com.westosia.essentials.homes.HomeManager;
+import com.westosia.essentials.homes.back.BackCmd;
 import com.westosia.essentials.homes.commands.DelHomeCmd;
 import com.westosia.essentials.homes.commands.HomeCmd;
 import com.westosia.essentials.homes.commands.HomesCmd;
@@ -51,6 +50,8 @@ public class Main extends JavaPlugin {
         FIRST_SPAWN_LOC = LocationStrings.fromConfig("first-spawn");
         checkDB();
         checkNickDB();
+        checkSeenDB();
+        checkPowerToolsDB();
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         // If people are on when enabled, load them in from db to prevent yeeting of homes on reload
         // This really shouldn't be done live anyways. Repeated reloads produces odd behaviour from the Redis listeners
@@ -64,11 +65,14 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.QUERY_HOMES.getChannel(), new QueryHomesListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SUDO.getChannel(), new SudoListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.NICKNAME.getChannel(), new NicknameListener());
-
+        RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SET_BACKHOME.getChannel(), new SetBackhomeListener());
         registerEvents(
                 new PlayerLeaveListener(),
-                new PlayerJoinListener()
-                );
+                new PlayerJoinListener(),
+                new PlayerTeleportListener(),
+                new PlayerInteractListener(),
+                new AccessoryListener()
+        );
 
         registerCommands(
                 new HealPlayerCmd(),
@@ -94,12 +98,14 @@ public class Main extends JavaPlugin {
                 new SetSpawnCmd(),
                 new JoinKitCmd(),
                 new InvseeCmd(),
-                new SudoCmd()
+                new SudoCmd(),
+                new BackCmd(),
+                new PowerToolCmd()
         );
 
         // register bungee plugin channel
-        getServer().getMessenger().registerOutgoingPluginChannel( this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginMessageReceiver());
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessageReceiver());
         queryServerName();
 
         getServer().getConsoleSender().sendMessage(Text.colour("&aEssentials enabled!"));
@@ -160,6 +166,24 @@ public class Main extends JavaPlugin {
             boolean exists = DatabaseEditor.checkIfNickTableExists();
             if (!exists) {
                 DatabaseEditor.createNickTable();
+            }
+        });
+    }
+
+    private void checkSeenDB() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            boolean exists = DatabaseEditor.checkIfSeenTableExists();
+            if (!exists) {
+                DatabaseEditor.createSeenTable();
+            }
+        });
+    }
+
+    private void checkPowerToolsDB() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            boolean exists = DatabaseEditor.checkIfPowerToolsTableExists();
+            if (!exists) {
+                DatabaseEditor.createPowerToolsTable();
             }
         });
     }
