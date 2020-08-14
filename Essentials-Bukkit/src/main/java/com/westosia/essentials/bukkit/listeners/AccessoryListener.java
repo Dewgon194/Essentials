@@ -36,7 +36,7 @@ public class AccessoryListener implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        if (e instanceof PlayerInventory) {
+        if (e.getClickedInventory() instanceof PlayerInventory) {
             if (e.getSlot() >= 9 && e.getSlot() <= 13) {
                 e.setCancelled(true);
             }
