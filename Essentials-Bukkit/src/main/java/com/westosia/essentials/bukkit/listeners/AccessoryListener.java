@@ -1,5 +1,6 @@
 package com.westosia.essentials.bukkit.listeners;
 
+import com.westosia.divinityapi.api.DivinityAPI;
 import com.westosia.westosiaapi.WestosiaAPI;
 import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import org.bukkit.Material;
@@ -28,7 +29,7 @@ public class AccessoryListener implements Listener {
         inv.setItem(13, WestosiaAPI.getItemBuilder()
                 .material(Material.CLAY_BALL)
                 .customModelData(6)
-                .name("&3Divinity: &b100")
+                .name("&3Divinity: &b" + DivinityAPI.getDivinity(e.getPlayer().getUniqueId()))
                 .lore("&7The pure essence of the Gods")
                 .build()
         );

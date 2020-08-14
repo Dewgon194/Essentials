@@ -71,7 +71,8 @@ public class Main extends JavaPlugin {
                 new PlayerJoinListener(),
                 new PlayerTeleportListener(),
                 new PlayerInteractListener(),
-                new AccessoryListener()
+                new AccessoryListener(),
+                new DivinityChangeListener()
         );
 
         registerCommands(
