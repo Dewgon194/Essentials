@@ -1,6 +1,6 @@
 main: com.westosia.essentials.bukkit.Main
 name: Westentials
-version: 0.1
+version: BUKKIT-${project.parent.version}
 authors:
   - TheBirmanator
   - TheMGRF
