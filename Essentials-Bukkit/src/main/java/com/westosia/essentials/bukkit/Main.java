@@ -1,6 +1,7 @@
 package com.westosia.essentials.bukkit;
 
-import co.aikar.commands.*;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.PaperCommandManager;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.westosia.essentials.bukkit.commands.*;
@@ -66,6 +67,7 @@ public class Main extends JavaPlugin {
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SUDO.getChannel(), new SudoListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.NICKNAME.getChannel(), new NicknameListener());
         RedisConnector.getInstance().listenForChannel(RedisAnnouncer.Channel.SET_BACKHOME.getChannel(), new SetBackhomeListener());
+
         registerEvents(
                 new PlayerLeaveListener(),
                 new PlayerJoinListener(),
