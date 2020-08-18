@@ -41,6 +41,10 @@ public class Home {
         return server;
     }
 
+    public void setServer(String server) {
+        this.server = server;
+    }
+
     public Location getLocation() {
         return location;
     }
