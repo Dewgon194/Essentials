@@ -1,6 +1,6 @@
 main: com.westosia.essentials.Main
 name: Westentials
-version: BUNGEE-${project.parent.version}
+version: BUNGEE-${project.parent.version}aaaaaaa
 authors:
   - TheBirmanator
   - TheMGRF

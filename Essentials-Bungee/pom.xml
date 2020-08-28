@@ -5,17 +5,17 @@
     <parent>
         <artifactId>Essentials</artifactId>
         <groupId>com.westosia</groupId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Essentials-Bungee</artifactId>
 
     <repositories>
-        <!-- BungeeCord -->
+        <!-- PaperMC -->
         <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <!-- PremiumVanish API -->
         <repository>
@@ -31,6 +31,13 @@
             <artifactId>bungeecord-api</artifactId>
             <version>1.15-SNAPSHOT</version>
             <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Waterfall -->
+        <dependency>
+            <groupId>io.github.waterfallmc</groupId>
+            <artifactId>waterfall-api</artifactId>
+            <version>1.16-R0.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- ACF Bungee (Commands) -->
