@@ -1,3 +1,5 @@
+# For My Contributions Check
+https://github.com/Dewgon194/Essentials/commits?author=Dewgon194
 # Essentials
 Teleports, homes, and other useful commands from Essentials, without all the extras
 
